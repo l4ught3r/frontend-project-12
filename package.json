@@ -4,10 +4,10 @@
   "description": "[![Actions Status](https://github.com/l4ught3r/frontend-project-12/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/l4ught3r/frontend-project-12/actions)",
   "main": "index.js",
   "scripts": {
-    "build": "DISABLE_ESLINT_PLUGIN=true npm run build --prefix frontend",
-    "start": "npx start-server -s ./frontend/build",
+    "build": "npm run build --prefix frontend",
+    "start": "start-server -s ./frontend/dist",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "cd frontend && npm install"
+    "postinstall": "cd frontend && npm ci"
   },
   "repository": {
     "type": "git",
