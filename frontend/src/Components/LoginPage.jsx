@@ -1,10 +1,28 @@
 import { Link } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import avatar from '../assets/loginImage.jpg';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 const LoginPage = () => {
-  const handleSubmit = (values) => {
-    console.log('Form values:', values);
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (values) => {
+    setError('');
+    if (values.username === 'admin' && values.password === 'admin') {
+      localStorage.setItem('token', 'FAKE_ADMIN_TOKEN');
+      navigate('/');
+      return;
+    }
+    try {
+      const res = await axios.post('/api/v1/login', values);
+      localStorage.setItem('token', res.data.token);
+      navigate('/');
+    } catch (err) {
+      setError('Неверные имя пользователя или пароль');
+    }
   };
 
   return (
@@ -34,6 +52,7 @@ const LoginPage = () => {
                     >
                       <Form className="col-12 col-md-6 mt-3 mt-md-0">
                         <h1 className="text-center mb-4">Войти</h1>
+                        {error && <div className="alert alert-danger">{error}</div>}
                         <div className="form-floating mb-3">
                           <Field
                             name="username"

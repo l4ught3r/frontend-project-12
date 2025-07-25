@@ -1,14 +1,23 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import NotFound from './NotFoundPage';
+import ChatPage from './ChatPage';
+
+const PrivateRoute = () => {
+  const token = localStorage.getItem('token');
+  return token ? <Outlet /> : <Navigate to="/login" replace />;
+};
+
 
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route element={<PrivateRoute />}>
+          <Route path="/" element={<ChatPage />} />
+        </Route>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="*" element={<NotFound />} />
