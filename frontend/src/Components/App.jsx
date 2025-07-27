@@ -13,7 +13,7 @@ const PrivateRoute = () => {
 
 const App = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
       <Routes>
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<ChatPage />} />

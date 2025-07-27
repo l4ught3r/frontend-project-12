@@ -1,15 +1,39 @@
 import { Link } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
+import * as Yup from 'yup';
 import avatar from '../assets/loginImage.jpg';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  const handleSubmit = async (values) => {
+  // Проверяем токен при загрузке компонента
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
+
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .min(3, 'Имя пользователя должно содержать минимум 3 символа')
+      .required('Имя пользователя обязательно'),
+    password: Yup.string()
+      .test('admin-check', 'Пароль должен содержать минимум 6 символов', function(value) {
+        const username = this.parent.username;
+        if (username === 'admin' && value === 'admin') {
+          return true;
+        }
+        return value && value.length >= 6;
+      })
+      .required('Пароль обязателен'),
+  });
+
+  const handleSubmit = async (values, { setSubmitting }) => {
     setError('');
     if (values.username === 'admin' && values.password === 'admin') {
       localStorage.setItem('token', 'FAKE_ADMIN_TOKEN');
@@ -21,7 +45,17 @@ const LoginPage = () => {
       localStorage.setItem('token', res.data.token);
       navigate('/');
     } catch (err) {
-      setError('Неверные имя пользователя или пароль');
+      if (err.response?.status === 401) {
+        setError('Неверные имя пользователя или пароль');
+      } else if (err.response?.status === 422) {
+        setError('Неверный формат данных');
+      } else if (err.response?.status >= 500) {
+        setError('Ошибка сервера. Попробуйте позже');
+      } else {
+        setError('Произошла ошибка при входе');
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -48,40 +82,53 @@ const LoginPage = () => {
 
                     <Formik
                       initialValues={{ username: '', password: '' }}
+                      validationSchema={validationSchema}
                       onSubmit={handleSubmit}
                     >
-                      <Form className="col-12 col-md-6 mt-3 mt-md-0">
-                        <h1 className="text-center mb-4">Войти</h1>
-                        {error && <div className="alert alert-danger">{error}</div>}
-                        <div className="form-floating mb-3">
-                          <Field
-                            name="username"
-                            autoComplete="username"
-                            required
-                            placeholder="Ваш ник"
-                            id="username"
-                            className="form-control"
-                          />
-                          <label htmlFor="username">Ваш ник</label>
-                        </div>
-                        <div className="form-floating mb-4">
-                          <Field
-                            name="password"
-                            autoComplete="current-password"
-                            required
-                            placeholder="Пароль"
-                            type="password"
-                            id="password"
-                            className="form-control"
-                          />
-                          <label className="form-label" htmlFor="password">
-                            Пароль
-                          </label>
-                        </div>
-                        <button type="submit" className="w-100 mb-3 btn btn-outline-primary">
-                          Войти
-                        </button>
-                      </Form>
+                      {({ errors, touched, isSubmitting }) => (
+                        <Form className="col-12 col-md-6 mt-3 mt-md-0">
+                          <h1 className="text-center mb-4">Войти</h1>
+                          {error && <div className="alert alert-danger">{error}</div>}
+                          <div className="form-floating mb-3">
+                            <Field
+                              name="username"
+                              autoComplete="username"
+                              required
+                              placeholder="Ваш ник"
+                              id="username"
+                              className={`form-control ${errors.username && touched.username ? 'is-invalid' : ''}`}
+                            />
+                            <label htmlFor="username">Ваш ник</label>
+                            {errors.username && touched.username && (
+                              <div className="invalid-feedback">{errors.username}</div>
+                            )}
+                          </div>
+                          <div className="form-floating mb-4">
+                            <Field
+                              name="password"
+                              autoComplete="current-password"
+                              required
+                              placeholder="Пароль"
+                              type="password"
+                              id="password"
+                              className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
+                            />
+                            <label className="form-label" htmlFor="password">
+                              Пароль
+                            </label>
+                            {errors.password && touched.password && (
+                              <div className="invalid-feedback">{errors.password}</div>
+                            )}
+                          </div>
+                          <button 
+                            type="submit" 
+                            className="w-100 mb-3 btn btn-outline-primary"
+                            disabled={isSubmitting}
+                          >
+                            {isSubmitting ? 'Вход...' : 'Войти'}
+                          </button>
+                        </Form>
+                      )}
                     </Formik>
                   </div>
                   <div className="card-footer p-4">

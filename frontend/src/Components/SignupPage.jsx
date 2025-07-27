@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import avatar1 from '../assets/signupImage.jpg';
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  // Проверяем токен при загрузке компонента
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
   return (
     <div className="h-100 bg-light">
       <div className="h-100" id="chat">
