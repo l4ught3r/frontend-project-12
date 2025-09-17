@@ -10,7 +10,6 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  // Проверяем токен при загрузке компонента
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -19,31 +18,19 @@ const LoginPage = () => {
   }, [navigate]);
 
   const validationSchema = Yup.object({
-    username: Yup.string()
-      .min(3, 'Имя пользователя должно содержать минимум 3 символа')
-      .required('Имя пользователя обязательно'),
-    password: Yup.string()
-      .test('admin-check', 'Пароль должен содержать минимум 6 символов', function(value) {
-        const username = this.parent.username;
-        if (username === 'admin' && value === 'admin') {
-          return true;
-        }
-        return value && value.length >= 6;
-      })
-      .required('Пароль обязателен'),
+    username: Yup.string().min(3, 'Имя пользователя должно содержать минимум 3 символа').required('Имя пользователя обязательно'),
+    password: Yup.string().min(6, 'Пароль должен содержать минимум 6 символов').required('Пароль обязателен'),
   });
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setError('');
-    if (values.username === 'admin' && values.password === 'admin') {
-      localStorage.setItem('token', 'FAKE_ADMIN_TOKEN');
-      navigate('/');
-      return;
-    }
     try {
       const res = await axios.post('/api/v1/login', values);
       localStorage.setItem('token', res.data.token);
-      navigate('/');
+      localStorage.setItem('username', res.data.username || values.username);
+      localStorage.removeItem('chatMessages');
+      localStorage.removeItem('chatChannels');
+      navigate('/', { replace: true });
     } catch (err) {
       if (err.response?.status === 401) {
         setError('Неверные имя пользователя или пароль');
@@ -70,7 +57,6 @@ const LoginPage = () => {
               </Link>
             </div>
           </nav>
-
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">
@@ -79,13 +65,8 @@ const LoginPage = () => {
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                       <img src={avatar} className="rounded-circle" alt="Войти" />
                     </div>
-
-                    <Formik
-                      initialValues={{ username: '', password: '' }}
-                      validationSchema={validationSchema}
-                      onSubmit={handleSubmit}
-                    >
-                      {({ errors, touched, isSubmitting }) => (
+                    <Formik initialValues={{ username: '', password: '' }} validationSchema={validationSchema} onSubmit={handleSubmit} validateOnChange={false} validateOnBlur={false}>
+                      {({ errors, submitCount, isSubmitting }) => (
                         <Form className="col-12 col-md-6 mt-3 mt-md-0">
                           <h1 className="text-center mb-4">Войти</h1>
                           {error && <div className="alert alert-danger">{error}</div>}
@@ -96,12 +77,11 @@ const LoginPage = () => {
                               required
                               placeholder="Ваш ник"
                               id="username"
-                              className={`form-control ${errors.username && touched.username ? 'is-invalid' : ''}`}
+                              className={`form-control ${errors.username && submitCount > 0 ? 'is-invalid' : ''}`}
+                              autoFocus
                             />
                             <label htmlFor="username">Ваш ник</label>
-                            {errors.username && touched.username && (
-                              <div className="invalid-feedback">{errors.username}</div>
-                            )}
+                            {errors.username && submitCount > 0 && <div className="invalid-feedback">{errors.username}</div>}
                           </div>
                           <div className="form-floating mb-4">
                             <Field
@@ -111,20 +91,12 @@ const LoginPage = () => {
                               placeholder="Пароль"
                               type="password"
                               id="password"
-                              className={`form-control ${errors.password && touched.password ? 'is-invalid' : ''}`}
+                              className={`form-control ${errors.password && submitCount > 0 ? 'is-invalid' : ''}`}
                             />
-                            <label className="form-label" htmlFor="password">
-                              Пароль
-                            </label>
-                            {errors.password && touched.password && (
-                              <div className="invalid-feedback">{errors.password}</div>
-                            )}
+                            <label className="form-label" htmlFor="password">Пароль</label>
+                            {errors.password && submitCount > 0 && <div className="invalid-feedback">{errors.password}</div>}
                           </div>
-                          <button 
-                            type="submit" 
-                            className="w-100 mb-3 btn btn-outline-primary"
-                            disabled={isSubmitting}
-                          >
+                          <button type="submit" className="w-100 mb-3 btn btn-outline-primary" disabled={isSubmitting}>
                             {isSubmitting ? 'Вход...' : 'Войти'}
                           </button>
                         </Form>

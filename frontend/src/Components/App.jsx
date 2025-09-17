@@ -3,13 +3,12 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom
 import LoginPage from './LoginPage';
 import SignupPage from './SignupPage';
 import NotFound from './NotFoundPage';
-import ChatPage from './ChatPage';
+import { ChatPage } from './ChatPage';
 
 const PrivateRoute = () => {
   const token = localStorage.getItem('token');
   return token ? <Outlet /> : <Navigate to="/login" replace />;
 };
-
 
 const App = () => {
   return (
