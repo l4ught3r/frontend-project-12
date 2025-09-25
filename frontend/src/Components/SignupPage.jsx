@@ -100,6 +100,7 @@ const SignupPage = () => {
                               name="username"
                               type="text"
                               autoComplete="username"
+                              autoFocus
                               required
                               placeholder={t('signup.username')}
                               id="username"

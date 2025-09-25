@@ -20,6 +20,7 @@ import {
   notifyNetworkError,
   notifyLoadingError 
 } from '../utils/notifications';
+import { filterProfanity } from '../utils/profanityFilter';
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -136,8 +137,11 @@ const ChatPage = () => {
     
     if (!trimmed || !channelId) return;
     
+    // Фильтруем нецензурные слова в сообщении
+    const filteredMessage = filterProfanity(trimmed);
+    
     try {
-      await dispatch(sendMessage({ body: trimmed, channelId })).unwrap();
+      await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap();
       setMessageBody('');
     } catch (error) {
       console.error('Failed to send message:', error);
@@ -175,8 +179,11 @@ const ChatPage = () => {
     const name = values.name?.trim();
     if (!name) return;
 
+    // Фильтруем нецензурные слова в названии канала
+    const filteredName = filterProfanity(name);
+
     try {
-      await dispatch(createChannel({ name })).unwrap();
+      await dispatch(createChannel({ name: filteredName })).unwrap();
       resetForm();
       closeModal('add');
       notifyChannelCreated(t);
@@ -192,8 +199,11 @@ const ChatPage = () => {
     const name = values.name?.trim();
     if (!name || !renameData.id) return;
 
+    // Фильтруем нецензурные слова в новом названии канала
+    const filteredName = filterProfanity(name);
+
     try {
-      await dispatch(renameChannel({ id: renameData.id, name })).unwrap();
+      await dispatch(renameChannel({ id: renameData.id, name: filteredName })).unwrap();
       resetForm();
       closeModal('rename');
       notifyChannelRenamed(t);

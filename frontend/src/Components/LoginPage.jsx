@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
 import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
 import axios from 'axios';
 import avatar from '../assets/loginImage.jpg';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -20,15 +19,7 @@ const LoginPage = () => {
     }
   }, [navigate]);
 
-  // Memoized validation schema
-  const validationSchema = useMemo(() => Yup.object({
-    username: Yup.string()
-      .min(3, t('login.errors.usernameMin'))
-      .required(t('login.errors.required')),
-    password: Yup.string()
-      .min(6, t('login.errors.passwordMin'))
-      .required(t('login.errors.required')),
-  }), [t]);
+
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setError('');
@@ -47,17 +38,7 @@ const LoginPage = () => {
       
       navigate('/', { replace: true });
     } catch (err) {
-      const status = err.response?.status;
-      
-      if (status === 401) {
-        setError(t('login.errors.invalidCredentials'));
-      } else if (status === 422) {
-        setError(t('login.errors.invalidFormat'));
-      } else if (status >= 500) {
-        setError(t('login.errors.serverError'));
-      } else {
-        setError(t('login.errors.loginFailed'));
-      }
+      setError(t('login.errors.invalidCredentials'));
     } finally {
       setSubmitting(false);
     }
@@ -85,10 +66,9 @@ const LoginPage = () => {
                     
                     <Formik
                       initialValues={{ username: '', password: '' }}
-                      validationSchema={validationSchema}
                       onSubmit={handleSubmit}
                     >
-                      {({ isSubmitting, errors, touched }) => (
+                      {({ isSubmitting }) => (
                         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
                           <h1 className="text-center mb-4">{t('login.title')}</h1>
                           
@@ -97,15 +77,13 @@ const LoginPage = () => {
                               name="username"
                               type="text"
                               autoComplete="username"
+                              autoFocus
                               required
                               placeholder={t('login.username')}
                               id="username"
-                              className={`form-control${errors.username && touched.username ? ' is-invalid' : ''}`}
+                              className="form-control"
                             />
                             <label htmlFor="username">{t('login.username')}</label>
-                            {errors.username && touched.username && (
-                              <div className="invalid-tooltip">{errors.username}</div>
-                            )}
                           </div>
                           
                           <div className="form-floating mb-4">
@@ -116,12 +94,9 @@ const LoginPage = () => {
                               required
                               placeholder={t('login.password')}
                               id="password"
-                              className={`form-control${errors.password && touched.password ? ' is-invalid' : ''}`}
+                              className="form-control"
                             />
                             <label htmlFor="password">{t('login.password')}</label>
-                            {errors.password && touched.password && (
-                              <div className="invalid-tooltip">{errors.password}</div>
-                            )}
                           </div>
                           
                           {error && (
