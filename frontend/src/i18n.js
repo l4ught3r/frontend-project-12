@@ -106,6 +106,16 @@ const resources = {
         title: 'Страница не найдена',
         message: 'Но вы можете перейти',
         linkText: 'на главную страницу'
+      },
+
+      // Уведомления
+      notifications: {
+        channelCreated: 'Канал создан',
+        channelRenamed: 'Канал переименован',
+        channelRemoved: 'Канал удален',
+        networkError: 'Ошибка сети',
+        loadingError: 'Ошибка загрузки данных',
+        connectionError: 'Ошибка соединения'
       }
     }
   },
@@ -212,6 +222,16 @@ const resources = {
         title: 'Page not found',
         message: 'But you can go',
         linkText: 'to the main page'
+      },
+
+      // Notifications
+      notifications: {
+        channelCreated: 'Channel created',
+        channelRenamed: 'Channel renamed',
+        channelRemoved: 'Channel removed',
+        networkError: 'Network error',
+        loadingError: 'Data loading error',
+        connectionError: 'Connection error'
       }
     }
   }

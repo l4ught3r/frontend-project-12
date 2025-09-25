@@ -13,6 +13,13 @@ import {
   removeChannel 
 } from '../chatSlice';
 import LanguageSwitcher from './LanguageSwitcher';
+import { 
+  notifyChannelCreated, 
+  notifyChannelRenamed, 
+  notifyChannelRemoved, 
+  notifyNetworkError,
+  notifyLoadingError 
+} from '../utils/notifications';
 
 const ChatPage = () => {
   const { t } = useTranslation();
@@ -90,8 +97,10 @@ const ChatPage = () => {
 
   // Effects
   useEffect(() => {
-    dispatch(fetchChatData());
-  }, [dispatch]);
+    dispatch(fetchChatData()).unwrap().catch(() => {
+      notifyLoadingError(t);
+    });
+  }, [dispatch, t]);
 
   useEffect(() => {
     if (channels.length > 0 && currentChannelId == null) {
@@ -170,12 +179,14 @@ const ChatPage = () => {
       await dispatch(createChannel({ name })).unwrap();
       resetForm();
       closeModal('add');
+      notifyChannelCreated(t);
     } catch (error) {
       console.error('Failed to create channel:', error);
+      notifyNetworkError(t);
     } finally {
       setSubmitting(false);
     }
-  }, [dispatch, closeModal]);
+  }, [dispatch, closeModal, t]);
 
   const handleRenameChannel = useCallback(async (values, { setSubmitting, resetForm }) => {
     const name = values.name?.trim();
@@ -185,12 +196,14 @@ const ChatPage = () => {
       await dispatch(renameChannel({ id: renameData.id, name })).unwrap();
       resetForm();
       closeModal('rename');
+      notifyChannelRenamed(t);
     } catch (error) {
       console.error('Failed to rename channel:', error);
+      notifyNetworkError(t);
     } finally {
       setSubmitting(false);
     }
-  }, [dispatch, renameData.id, closeModal]);
+  }, [dispatch, renameData.id, closeModal, t]);
 
   const handleRemoveChannel = useCallback(async () => {
     if (!removeTargetId) return;
@@ -198,10 +211,12 @@ const ChatPage = () => {
     try {
       await dispatch(removeChannel({ id: removeTargetId })).unwrap();
       closeModal('remove');
+      notifyChannelRemoved(t);
     } catch (error) {
       console.error('Failed to remove channel:', error);
+      notifyNetworkError(t);
     }
-  }, [dispatch, removeTargetId, closeModal]);
+  }, [dispatch, removeTargetId, closeModal, t]);
 
   // Render helpers
   const renderModal = (type, title, children) => {
