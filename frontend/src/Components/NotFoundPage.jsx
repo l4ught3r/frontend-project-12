@@ -1,14 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import notFoundImage from '../assets/notFoundImage.svg';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const NotFoundPage = () => {
+  const { t } = useTranslation();
+  
   return (
     <div className="h-100 bg-light">
       <div className="h-100 d-flex flex-column">
         <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
           <div className="container">
-            <Link className="navbar-brand" to="/">Hexlet Chat</Link>
+            <Link className="navbar-brand" to="/">{t('appName')}</Link>
+            <LanguageSwitcher />
           </div>
         </nav>
         
@@ -16,12 +21,12 @@ const NotFoundPage = () => {
           <img 
             className="img-fluid mb-4" 
             src={notFoundImage} 
-            alt="Страница не найдена"
+            alt={t('notFound.title')}
             style={{ maxHeight: '300px' }}
           />
-          <h1 className="h4 text-muted mb-3">Страница не найдена</h1>
+          <h1 className="h4 text-muted mb-3">{t('notFound.title')}</h1>
           <p className="text-center">
-            Но вы можете перейти <Link to="/">на главную страницу</Link>
+            {t('notFound.message')} <Link to="/">{t('notFound.linkText')}</Link>
           </p>
         </div>
       </div>

@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import axios from 'axios';
 import avatar from '../assets/loginImage.jpg';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const LoginPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
@@ -20,12 +23,12 @@ const LoginPage = () => {
   // Memoized validation schema
   const validationSchema = useMemo(() => Yup.object({
     username: Yup.string()
-      .min(3, 'Имя пользователя должно содержать минимум 3 символа')
-      .required('Имя пользователя обязательно'),
+      .min(3, t('login.errors.usernameMin'))
+      .required(t('login.errors.required')),
     password: Yup.string()
-      .min(6, 'Пароль должен содержать минимум 6 символов')
-      .required('Пароль обязателен'),
-  }), []);
+      .min(6, t('login.errors.passwordMin'))
+      .required(t('login.errors.required')),
+  }), [t]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setError('');
@@ -47,13 +50,13 @@ const LoginPage = () => {
       const status = err.response?.status;
       
       if (status === 401) {
-        setError('Неверные имя пользователя или пароль');
+        setError(t('login.errors.invalidCredentials'));
       } else if (status === 422) {
-        setError('Неверный формат данных');
+        setError(t('login.errors.invalidFormat'));
       } else if (status >= 500) {
-        setError('Ошибка сервера. Попробуйте позже');
+        setError(t('login.errors.serverError'));
       } else {
-        setError('Произошла ошибка при входе');
+        setError(t('login.errors.loginFailed'));
       }
     } finally {
       setSubmitting(false);
@@ -66,7 +69,8 @@ const LoginPage = () => {
         <div className="d-flex flex-column h-100">
           <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
             <div className="container">
-              <Link className="navbar-brand" to="/">Hexlet Chat</Link>
+              <Link className="navbar-brand" to="/">{t('appName')}</Link>
+              <LanguageSwitcher />
             </div>
           </nav>
           
@@ -86,7 +90,7 @@ const LoginPage = () => {
                     >
                       {({ isSubmitting, errors, touched }) => (
                         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
-                          <h1 className="text-center mb-4">Войти</h1>
+                          <h1 className="text-center mb-4">{t('login.title')}</h1>
                           
                           <div className="form-floating mb-3">
                             <Field
@@ -94,11 +98,11 @@ const LoginPage = () => {
                               type="text"
                               autoComplete="username"
                               required
-                              placeholder="Ваш ник"
+                              placeholder={t('login.username')}
                               id="username"
                               className={`form-control${errors.username && touched.username ? ' is-invalid' : ''}`}
                             />
-                            <label htmlFor="username">Ваш ник</label>
+                            <label htmlFor="username">{t('login.username')}</label>
                             {errors.username && touched.username && (
                               <div className="invalid-tooltip">{errors.username}</div>
                             )}
@@ -110,11 +114,11 @@ const LoginPage = () => {
                               type="password"
                               autoComplete="current-password"
                               required
-                              placeholder="Пароль"
+                              placeholder={t('login.password')}
                               id="password"
                               className={`form-control${errors.password && touched.password ? ' is-invalid' : ''}`}
                             />
-                            <label htmlFor="password">Пароль</label>
+                            <label htmlFor="password">{t('login.password')}</label>
                             {errors.password && touched.password && (
                               <div className="invalid-tooltip">{errors.password}</div>
                             )}
@@ -131,7 +135,7 @@ const LoginPage = () => {
                             className="w-100 mb-3 btn btn-outline-primary"
                             disabled={isSubmitting}
                           >
-                            {isSubmitting ? 'Вход...' : 'Войти'}
+                            {isSubmitting ? t('login.loggingIn') : t('login.loginButton')}
                           </button>
                         </Form>
                       )}
@@ -140,8 +144,8 @@ const LoginPage = () => {
                   
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>Нет аккаунта? </span>
-                      <Link to="/signup">Регистрация</Link>
+                      <span>{t('nav.noAccount')} </span>
+                      <Link to="/signup">{t('nav.signup')}</Link>
                     </div>
                   </div>
                 </div>

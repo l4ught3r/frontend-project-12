@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { 
   fetchChatData, 
@@ -11,8 +12,10 @@ import {
   renameChannel, 
   removeChannel 
 } from '../chatSlice';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const ChatPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { channels, messages, status, sending, currentChannelId } = useSelector(state => state.chat);
@@ -43,25 +46,30 @@ const ChatPage = () => {
     [messages, currentChannelId, currentChannel?.id]
   );
 
+  // Функция для правильного склонения слова "сообщение"
+  const getMessageCountText = useCallback((count) => {
+    return t('chat.messageCount', { count });
+  }, [t]);
+
   // Validation schemas
   const createChannelSchema = useMemo(() => Yup.object({
     name: Yup.string()
       .transform(v => v?.trim())
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .test('unique', 'Имя должно быть уникальным', value => {
+      .min(3, t('chat.validation.length'))
+      .max(20, t('chat.validation.length'))
+      .test('unique', t('chat.validation.unique'), value => {
         const trimmed = value?.trim().toLowerCase();
         return !trimmed || !channels.some(c => c.name?.trim().toLowerCase() === trimmed);
       })
-      .required('Обязательное поле'),
-  }), [channels]);
+      .required(t('chat.validation.required')),
+  }), [channels, t]);
 
   const renameChannelSchema = useMemo(() => Yup.object({
     name: Yup.string()
       .transform(v => v?.trim())
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .test('unique', 'Имя должно быть уникальным', value => {
+      .min(3, t('chat.validation.length'))
+      .max(20, t('chat.validation.length'))
+      .test('unique', t('chat.validation.unique'), value => {
         const trimmed = value?.trim().toLowerCase();
         if (!trimmed) return true;
         
@@ -77,8 +85,8 @@ const ChatPage = () => {
           c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed
         );
       })
-      .required('Обязательное поле'),
-  }), [channels, renameData.id]);
+      .required(t('chat.validation.required')),
+  }), [channels, renameData.id, t]);
 
   // Effects
   useEffect(() => {
@@ -258,7 +266,7 @@ const ChatPage = () => {
                 onClick={() => handleDropdownToggle(channel.id)}
                 aria-expanded={showDropdown}
               >
-                <span className="visually-hidden">Управление каналом</span>
+                <span className="visually-hidden">{t('chat.channelManagement')}</span>
               </button>
               
               {showDropdown && (
@@ -272,14 +280,14 @@ const ChatPage = () => {
                     type="button" 
                     onClick={() => openModal('remove', { id: channel.id })}
                   >
-                    Удалить
+                    {t('chat.actions.delete')}
                   </button>
                   <button 
                     className="dropdown-item" 
                     type="button" 
                     onClick={() => openModal('rename', { id: channel.id, name: channel.name })}
                   >
-                    Переименовать
+                    {t('chat.actions.rename')}
                   </button>
                 </div>
               )}
@@ -296,10 +304,13 @@ const ChatPage = () => {
         {/* Header */}
         <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
           <div className="container">
-            <Link className="navbar-brand" to="/">Hexlet Chat</Link>
-            <button type="button" className="btn btn-primary" onClick={handleLogout}>
-              Выйти
-            </button>
+            <Link className="navbar-brand" to="/">{t('appName')}</Link>
+            <div className="d-flex align-items-center gap-2">
+              <LanguageSwitcher />
+              <button type="button" className="btn btn-primary" onClick={handleLogout}>
+                {t('logout')}
+              </button>
+            </div>
           </div>
         </nav>
 
@@ -309,12 +320,12 @@ const ChatPage = () => {
             {/* Channels sidebar */}
             <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
               <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-                <b>Каналы</b>
+                <b>{t('chat.channels')}</b>
                 <button 
                   type="button" 
                   className="p-0 text-primary btn btn-group-vertical" 
                   onClick={() => openModal('add')}
-                  aria-label="Добавить канал"
+                  aria-label={t('chat.addChannel')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
@@ -337,7 +348,7 @@ const ChatPage = () => {
                   <p className="m-0">
                     <b># {currentChannel?.name || ''}</b>
                   </p>
-                  <span className="text-muted">{channelMessages.length} сообщений</span>
+                  <span className="text-muted">{getMessageCountText(channelMessages.length)}</span>
                 </div>
 
                 {/* Messages */}
@@ -362,8 +373,8 @@ const ChatPage = () => {
                       <input
                         ref={inputRef}
                         name="body"
-                        aria-label="Новое сообщение"
-                        placeholder={status === 'loading' ? 'Загрузка...' : 'Введите сообщение...'}
+                        aria-label={t('chat.newMessage')}
+                        placeholder={status === 'loading' ? t('loading') : t('chat.enterMessage')}
                         className="border-0 p-0 ps-2 form-control"
                         value={messageBody}
                         onChange={(e) => setMessageBody(e.target.value)}
@@ -379,7 +390,7 @@ const ChatPage = () => {
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                           <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
                         </svg>
-                        <span className="visually-hidden">Отправить</span>
+                        <span className="visually-hidden">{t('chat.send')}</span>
                       </button>
                     </div>
                   </form>
@@ -390,7 +401,7 @@ const ChatPage = () => {
         </div>
 
         {/* Modals */}
-        {renderModal('add', 'Добавить канал', (
+        {renderModal('add', t('chat.modals.addChannel.title'), (
           <Formik
             initialValues={{ name: '' }}
             validationSchema={createChannelSchema}
@@ -405,7 +416,7 @@ const ChatPage = () => {
                   className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
                   autoFocus
                 />
-                <label className="visually-hidden" htmlFor="name">Имя канала</label>
+                <label className="visually-hidden" htmlFor="name">{t('chat.modals.addChannel.channelName')}</label>
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button 
@@ -414,10 +425,10 @@ const ChatPage = () => {
                     onClick={() => closeModal('add')}
                     disabled={isSubmitting}
                   >
-                    Отменить
+                    {t('cancel')}
                   </button>
                   <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                    Отправить
+                    {t('submit')}
                   </button>
                 </div>
               </Form>
@@ -425,7 +436,7 @@ const ChatPage = () => {
           </Formik>
         ))}
 
-        {renderModal('rename', 'Переименовать канал', (
+        {renderModal('rename', t('chat.modals.renameChannel.title'), (
           <Formik
             initialValues={{ name: renameData.name || '' }}
             validationSchema={renameChannelSchema}
@@ -442,7 +453,7 @@ const ChatPage = () => {
                   autoFocus
                   onFocus={(e) => e.target.select()}
                 />
-                <label className="visually-hidden" htmlFor="name">Имя канала</label>
+                <label className="visually-hidden" htmlFor="name">{t('chat.modals.renameChannel.channelName')}</label>
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button 
@@ -451,10 +462,10 @@ const ChatPage = () => {
                     onClick={() => closeModal('rename')}
                     disabled={isSubmitting}
                   >
-                    Отменить
+                    {t('cancel')}
                   </button>
                   <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                    Отправить
+                    {t('submit')}
                   </button>
                 </div>
               </Form>
@@ -462,23 +473,23 @@ const ChatPage = () => {
           </Formik>
         ))}
 
-        {renderModal('remove', 'Удалить канал', (
+        {renderModal('remove', t('chat.modals.removeChannel.title'), (
           <>
-            <p>Вы уверены, что хотите удалить канал?</p>
+            <p>{t('chat.modals.removeChannel.confirm')}</p>
             <div className="d-flex justify-content-end">
               <button 
                 type="button" 
                 className="me-2 btn btn-secondary" 
                 onClick={() => closeModal('remove')}
               >
-                Отменить
+                {t('cancel')}
               </button>
               <button 
                 type="button" 
                 className="btn btn-danger" 
                 onClick={handleRemoveChannel}
               >
-                Удалить
+                {t('chat.modals.removeChannel.delete')}
               </button>
             </div>
           </>

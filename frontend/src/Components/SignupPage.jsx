@@ -1,11 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import axios from 'axios';
 import avatar from '../assets/signupImage.jpg';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const SignupPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
@@ -20,16 +23,16 @@ const SignupPage = () => {
   // Memoized validation schema
   const validationSchema = useMemo(() => Yup.object({
     username: Yup.string()
-      .min(3, 'От 3 до 20 символов')
-      .max(20, 'От 3 до 20 символов')
-      .required('Обязательное поле'),
+      .min(3, t('signup.errors.usernameLength'))
+      .max(20, t('signup.errors.usernameLength'))
+      .required(t('signup.errors.required')),
     password: Yup.string()
-      .min(6, 'Не менее 6 символов')
-      .required('Обязательное поле'),
+      .min(6, t('signup.errors.passwordMin'))
+      .required(t('signup.errors.required')),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password')], 'Пароли должны совпадать')
-      .required('Обязательное поле'),
-  }), []);
+      .oneOf([Yup.ref('password')], t('signup.errors.passwordMatch'))
+      .required(t('signup.errors.required')),
+  }), [t]);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setError('');
@@ -52,11 +55,11 @@ const SignupPage = () => {
       const status = err.response?.status;
       
       if (status === 409) {
-        setError('Пользователь уже существует');
+        setError(t('signup.errors.userExists'));
       } else if (status >= 500) {
-        setError('Ошибка сервера. Попробуйте позже');
+        setError(t('signup.errors.serverError'));
       } else {
-        setError('Не удалось зарегистрироваться');
+        setError(t('signup.errors.signupFailed'));
       }
     } finally {
       setSubmitting(false);
@@ -69,7 +72,8 @@ const SignupPage = () => {
         <div className="d-flex flex-column h-100">
           <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
             <div className="container">
-              <Link className="navbar-brand" to="/">Hexlet Chat</Link>
+              <Link className="navbar-brand" to="/">{t('appName')}</Link>
+              <LanguageSwitcher />
             </div>
           </nav>
           
@@ -89,7 +93,7 @@ const SignupPage = () => {
                     >
                       {({ isSubmitting, errors, touched }) => (
                         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
-                          <h1 className="text-center mb-4">Регистрация</h1>
+                          <h1 className="text-center mb-4">{t('signup.title')}</h1>
                           
                           <div className="form-floating mb-3">
                             <Field
@@ -97,11 +101,11 @@ const SignupPage = () => {
                               type="text"
                               autoComplete="username"
                               required
-                              placeholder="Имя пользователя"
+                              placeholder={t('signup.username')}
                               id="username"
                               className={`form-control${errors.username && touched.username ? ' is-invalid' : ''}`}
                             />
-                            <label htmlFor="username">Имя пользователя</label>
+                            <label htmlFor="username">{t('signup.username')}</label>
                             {errors.username && touched.username && (
                               <div className="invalid-tooltip">{errors.username}</div>
                             )}
@@ -113,11 +117,11 @@ const SignupPage = () => {
                               type="password"
                               autoComplete="new-password"
                               required
-                              placeholder="Пароль"
+                              placeholder={t('signup.password')}
                               id="password"
                               className={`form-control${errors.password && touched.password ? ' is-invalid' : ''}`}
                             />
-                            <label htmlFor="password">Пароль</label>
+                            <label htmlFor="password">{t('signup.password')}</label>
                             {errors.password && touched.password && (
                               <div className="invalid-tooltip">{errors.password}</div>
                             )}
@@ -129,11 +133,11 @@ const SignupPage = () => {
                               type="password"
                               autoComplete="new-password"
                               required
-                              placeholder="Подтвердите пароль"
+                              placeholder={t('signup.confirmPassword')}
                               id="confirmPassword"
                               className={`form-control${errors.confirmPassword && touched.confirmPassword ? ' is-invalid' : ''}`}
                             />
-                            <label htmlFor="confirmPassword">Подтвердите пароль</label>
+                            <label htmlFor="confirmPassword">{t('signup.confirmPassword')}</label>
                             {errors.confirmPassword && touched.confirmPassword && (
                               <div className="invalid-tooltip">{errors.confirmPassword}</div>
                             )}
@@ -150,7 +154,7 @@ const SignupPage = () => {
                             className="w-100 mb-3 btn btn-outline-primary"
                             disabled={isSubmitting}
                           >
-                            {isSubmitting ? 'Регистрация...' : 'Зарегистрироваться'}
+                            {isSubmitting ? t('signup.signingUp') : t('signup.signupButton')}
                           </button>
                         </Form>
                       )}
@@ -159,8 +163,8 @@ const SignupPage = () => {
                   
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>Уже есть аккаунт? </span>
-                      <Link to="/login">Войти</Link>
+                      <span>{t('nav.hasAccount')} </span>
+                      <Link to="/login">{t('nav.login')}</Link>
                     </div>
                   </div>
                 </div>

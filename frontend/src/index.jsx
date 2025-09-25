@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import './index.css';
+import './i18n'; // Инициализация i18n
 import App from './Components/App.jsx';
 import store from './store';
 import socket from './socket';
