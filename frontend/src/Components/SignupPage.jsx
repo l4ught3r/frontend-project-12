@@ -12,7 +12,6 @@ const SignupPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  // Redirect if already logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -20,7 +19,6 @@ const SignupPage = () => {
     }
   }, [navigate]);
 
-  // Memoized validation schema
   const validationSchema = useMemo(() => Yup.object({
     username: Yup.string()
       .min(3, t('signup.errors.usernameLength'))
@@ -42,11 +40,9 @@ const SignupPage = () => {
       const response = await axios.post('/api/v1/signup', { username, password });
       const { token, username: responseUsername } = response.data;
       
-      // Store auth data
       localStorage.setItem('token', token);
       localStorage.setItem('username', responseUsername || username);
       
-      // Clear old chat data
       localStorage.removeItem('chatMessages');
       localStorage.removeItem('chatChannels');
       

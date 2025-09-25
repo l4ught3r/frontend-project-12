@@ -11,15 +11,12 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState('');
 
-  // Redirect if already logged in
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       navigate('/', { replace: true });
     }
   }, [navigate]);
-
-
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setError('');
@@ -28,11 +25,9 @@ const LoginPage = () => {
       const response = await axios.post('/api/v1/login', values);
       const { token, username } = response.data;
       
-      // Store auth data
       localStorage.setItem('token', token);
       localStorage.setItem('username', username || values.username);
       
-      // Clear old chat data
       localStorage.removeItem('chatMessages');
       localStorage.removeItem('chatChannels');
       

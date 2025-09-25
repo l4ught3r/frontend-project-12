@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Константы
 const DEFAULT_CHANNELS = [
   { id: 1, name: 'general', removable: false },
   { id: 2, name: 'random', removable: false },
 ];
 
 const DEFAULT_USERNAME = 'anonymous';
-
-// Утилиты для работы с API
 const getAuthHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token')}`,
 });
@@ -178,7 +175,6 @@ export const removeChannel = createAsyncThunk(
   }
 );
 
-// Slice
 const chatSlice = createSlice({
   name: 'chat',
   initialState: {
@@ -194,7 +190,6 @@ const chatSlice = createSlice({
       const message = normalizeMessage(action.payload);
       if (!message?.channelId) return;
 
-      // Удаляем оптимистическое сообщение
       state.messages = removeOptimisticMessages(
         state.messages,
         message.channelId,
@@ -249,7 +244,6 @@ const chatSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      // Fetch chat data
       .addCase(fetchChatData.pending, (state) => {
         state.status = 'loading';
       })
@@ -257,7 +251,6 @@ const chatSlice = createSlice({
         state.status = 'succeeded';
         const payload = action.payload?.data || action.payload;
 
-        // Нормализация каналов
         let channels = Array.isArray(payload.channels) 
           ? payload.channels 
           : Object.values(payload.channels || {});
@@ -268,7 +261,6 @@ const chatSlice = createSlice({
 
         state.channels = normalizedChannels.length > 0 ? normalizedChannels : DEFAULT_CHANNELS;
 
-        // Нормализация сообщений
         let messages = Array.isArray(payload.messages)
           ? payload.messages
           : Object.values(payload.messages || {});
@@ -277,7 +269,6 @@ const chatSlice = createSlice({
           .map(normalizeMessage)
           .filter(Boolean);
 
-        // Удаление дубликатов по ID
         const uniqueMessages = normalizedMessages.filter((message, index, arr) => 
           message.id == null || arr.findIndex(m => m.id === message.id) === index
         );
@@ -294,7 +285,6 @@ const chatSlice = createSlice({
         state.currentChannelId = state.currentChannelId || DEFAULT_CHANNELS[0].id;
       })
 
-      // Send message
       .addCase(sendMessage.pending, (state, action) => {
         state.sending = 'loading';
         const { body, channelId } = action.meta.arg;

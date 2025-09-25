@@ -3,12 +3,13 @@ lint:
 
 install:
 	npm ci
+	make -C frontend install
 
 start-frontend:
 	make -C frontend dev
 
 start-backend:
-	npx start-server -s ./frontend/dist
+	npx @hexlet/chat-server -s ./frontend/dist
 
 start:
 	make start-backend
@@ -18,4 +19,4 @@ dev:
 
 build:
 	rm -rf frontend/dist
-	npm run build
+	make -C frontend build

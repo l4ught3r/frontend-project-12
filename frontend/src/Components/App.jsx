@@ -9,7 +9,6 @@ import SignupPage from './SignupPage';
 import NotFound from './NotFoundPage';
 import ChatPage from './ChatPage';
 
-// Конфигурация Rollbar
 const rollbarConfig = {
   accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN || 'b3f75409edff4a71b8940185b1611576',
   environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT || import.meta.env.MODE || 'testenv',
@@ -38,7 +37,6 @@ const PrivateRoute = () => {
       }
 
       try {
-        // Проверяем токен запросом к защищённому эндпоинту
         const response = await fetch('/api/v1/channels', {
           headers: { Authorization: `Bearer ${token}` }
         });
@@ -46,13 +44,11 @@ const PrivateRoute = () => {
         if (response.ok) {
           setIsValid(true);
         } else {
-          // Токен невалидный, очищаем localStorage
           localStorage.removeItem('token');
           localStorage.removeItem('username');
           setIsValid(false);
         }
       } catch (error) {
-        // Ошибка сети или сервера, очищаем токен
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         setIsValid(false);
@@ -65,7 +61,6 @@ const PrivateRoute = () => {
   }, [token]);
 
   if (isValidating) {
-    // Показываем загрузку пока проверяем токен
     return <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="spinner-border" role="status">
         <span className="visually-hidden">Загрузка...</span>

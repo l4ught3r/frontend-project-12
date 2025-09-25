@@ -1,6 +1,5 @@
 import { toast } from 'react-toastify';
 
-// Настройки по умолчанию для всех уведомлений
 const defaultOptions = {
   position: 'top-right',
   autoClose: 3000,
@@ -11,8 +10,6 @@ const defaultOptions = {
   progress: undefined,
   theme: 'light',
 };
-
-// Утилиты для показа разных типов уведомлений
 export const showSuccess = (message, options = {}) => {
   toast.success(message, { ...defaultOptions, ...options });
 };
@@ -29,7 +26,6 @@ export const showWarning = (message, options = {}) => {
   toast.warning(message, { ...defaultOptions, ...options });
 };
 
-// Специальные уведомления для каналов
 export const notifyChannelCreated = (t) => {
   showSuccess(t('notifications.channelCreated'));
 };
@@ -41,8 +37,6 @@ export const notifyChannelRenamed = (t) => {
 export const notifyChannelRemoved = (t) => {
   showSuccess(t('notifications.channelRemoved'));
 };
-
-// Уведомления об ошибках
 export const notifyNetworkError = (t) => {
   showError(t('notifications.networkError'));
 };

@@ -4,7 +4,6 @@ import { initReactI18next } from 'react-i18next';
 const resources = {
   ru: {
     translation: {
-      // Общие
       appName: 'Hexlet Chat',
       loading: 'Загрузка...',
       cancel: 'Отменить',
@@ -12,7 +11,6 @@ const resources = {
       close: 'Закрыть',
       logout: 'Выйти',
       
-      // Навигация
       nav: {
         noAccount: 'Нет аккаунта?',
         hasAccount: 'Уже есть аккаунт?',
@@ -21,7 +19,6 @@ const resources = {
         toMainPage: 'на главную страницу'
       },
       
-      // Страница входа
       login: {
         title: 'Войти',
         username: 'Ваш ник',
@@ -39,7 +36,6 @@ const resources = {
         }
       },
       
-      // Страница регистрации
       signup: {
         title: 'Регистрация',
         username: 'Имя пользователя',
@@ -58,10 +54,10 @@ const resources = {
         }
       },
       
-      // Страница чата
       chat: {
         channels: 'Каналы',
         addChannel: 'Добавить канал',
+        addChannelButton: '+',
         messageCount: '{{count}} сообщение',
         messageCount_2: '{{count}} сообщения',
         messageCount_5: '{{count}} сообщений',
@@ -70,7 +66,6 @@ const resources = {
         send: 'Отправить',
         channelManagement: 'Управление каналом',
         
-        // Модальные окна
         modals: {
           addChannel: {
             title: 'Добавить канал',
@@ -87,13 +82,11 @@ const resources = {
           }
         },
         
-        // Действия с каналами
         actions: {
           rename: 'Переименовать',
           delete: 'Удалить'
         },
         
-        // Валидация каналов
         validation: {
           required: 'Обязательное поле',
           length: 'От 3 до 20 символов',
@@ -101,19 +94,18 @@ const resources = {
         }
       },
       
-      // Страница 404
       notFound: {
         title: 'Страница не найдена',
         message: 'Но вы можете перейти',
         linkText: 'на главную страницу'
       },
 
-      // Уведомления
+
       notifications: {
         channelCreated: 'Канал создан',
         channelRenamed: 'Канал переименован',
-        channelRemoved: 'Канал удален',
-        networkError: 'Ошибка сети',
+        channelRemoved: 'Канал удалён',
+        networkError: 'Ошибка соединения',
         loadingError: 'Ошибка загрузки данных',
         connectionError: 'Ошибка соединения'
       }
@@ -121,7 +113,6 @@ const resources = {
   },
   en: {
     translation: {
-      // General
       appName: 'Hexlet Chat',
       loading: 'Loading...',
       cancel: 'Cancel',
@@ -129,7 +120,6 @@ const resources = {
       close: 'Close',
       logout: 'Logout',
       
-      // Navigation
       nav: {
         noAccount: "Don't have an account?",
         hasAccount: 'Already have an account?',
@@ -138,7 +128,6 @@ const resources = {
         toMainPage: 'to the main page'
       },
       
-      // Login page
       login: {
         title: 'Log in',
         username: 'Your username',
@@ -156,7 +145,6 @@ const resources = {
         }
       },
       
-      // Signup page
       signup: {
         title: 'Sign up',
         username: 'Username',
@@ -175,7 +163,6 @@ const resources = {
         }
       },
       
-      // Chat page
       chat: {
         channels: 'Channels',
         addChannel: 'Add channel',
@@ -186,7 +173,6 @@ const resources = {
         send: 'Send',
         channelManagement: 'Channel management',
         
-        // Modals
         modals: {
           addChannel: {
             title: 'Add channel',
@@ -203,13 +189,11 @@ const resources = {
           }
         },
         
-        // Channel actions
         actions: {
           rename: 'Rename',
           delete: 'Remove'
         },
         
-        // Channel validation
         validation: {
           required: 'Required field',
           length: 'From 3 to 20 characters',
@@ -217,14 +201,12 @@ const resources = {
         }
       },
       
-      // 404 page
       notFound: {
         title: 'Page not found',
         message: 'But you can go',
         linkText: 'to the main page'
       },
 
-      // Notifications
       notifications: {
         channelCreated: 'Channel created',
         channelRenamed: 'Channel renamed',
@@ -237,18 +219,15 @@ const resources = {
   }
 };
 
-// Получаем сохраненный язык или используем дефолтный
-const savedLanguage = localStorage.getItem('language') || 'ru';
-
 i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: savedLanguage,
+    lng: 'ru',
     fallbackLng: 'ru',
     
     interpolation: {
-      escapeValue: false // React уже экранирует значения
+      escapeValue: false
     }
   });
 
