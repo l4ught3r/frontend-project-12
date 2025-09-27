@@ -55,7 +55,8 @@ const LanguageSwitcher = () => {
               width: '2px',
               height: '10px',
               backgroundColor: '#ffffff',
-            }} />
+            }}
+            />
             <div style={{
               position: 'absolute',
               top: '4px',
@@ -63,7 +64,8 @@ const LanguageSwitcher = () => {
               width: '14px',
               height: '2px',
               backgroundColor: '#ffffff',
-            }} />
+            }}
+            />
             {/* Красные полосы */}
             <div style={{
               position: 'absolute',
@@ -72,7 +74,8 @@ const LanguageSwitcher = () => {
               width: '14px',
               height: '1px',
               backgroundColor: '#c8102e',
-            }} />
+            }}
+            />
             <div style={{
               position: 'absolute',
               top: '0',
@@ -80,7 +83,8 @@ const LanguageSwitcher = () => {
               width: '1px',
               height: '10px',
               backgroundColor: '#c8102e',
-            }} />
+            }}
+            />
           </div>
         )
       }
@@ -111,7 +115,7 @@ const LanguageSwitcher = () => {
     )
   }
 
-  const handleLanguageChange = (langCode) => {
+  const handleLanguageChange = langCode => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
     localStorage.setItem('language', langCode)
@@ -123,7 +127,7 @@ const LanguageSwitcher = () => {
 
   // Закрытие при клике вне компонента
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false)
       }
@@ -137,7 +141,7 @@ const LanguageSwitcher = () => {
 
   // Закрытие при нажатии Escape
   useEffect(() => {
-    const handleEscape = (event) => {
+    const handleEscape = event => {
       if (event.key === 'Escape') {
         setIsOpen(false)
       }
@@ -172,7 +176,7 @@ const LanguageSwitcher = () => {
             transition: 'transform 0.2s ease',
           }}
         >
-          <path d="M2 4l4 4 4-4H2z"/>
+          <path d="M2 4l4 4 4-4H2z" />
         </svg>
       </button>
 
@@ -186,7 +190,7 @@ const LanguageSwitcher = () => {
             zIndex: 1050,
           }}
         >
-          {languages.map((language) => (
+          {languages.map(language => (
             <button
               key={language.code}
               className={`dropdown-item d-flex align-items-center ${
@@ -204,7 +208,7 @@ const LanguageSwitcher = () => {
                   viewBox="0 0 16 16"
                   fill="currentColor"
                 >
-                  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                  <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
                 </svg>
               )}
             </button>

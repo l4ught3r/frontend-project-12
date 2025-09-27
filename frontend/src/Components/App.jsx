@@ -61,11 +61,13 @@ const PrivateRoute = () => {
   }, [token])
 
   if (isValidating) {
-    return <div className="d-flex justify-content-center align-items-center vh-100">
-      <div className="spinner-border" role="status">
-        <span className="visually-hidden">Загрузка...</span>
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Загрузка...</span>
+        </div>
       </div>
-    </div>
+    )
   }
 
   return isValid ? <Outlet /> : <Navigate to="/login" replace />

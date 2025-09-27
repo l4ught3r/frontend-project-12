@@ -160,7 +160,10 @@ const SignupPage = () => {
 
                   <div className="card-footer p-4">
                     <div className="text-center">
-                      <span>{t('nav.hasAccount')} </span>
+                      <span>
+                        {t('nav.hasAccount')}
+                        {' '}
+                      </span>
                       <Link to="/login">{t('nav.login')}</Link>
                     </div>
                   </div>

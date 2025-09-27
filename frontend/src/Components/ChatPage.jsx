@@ -50,7 +50,7 @@ const ChatPage = () => {
   [messages, currentChannelId, currentChannel?.id],
   )
 
-  const getMessageCountText = useCallback((count) => {
+  const getMessageCountText = useCallback(count => {
     return t('chat.messageCount', { count })
   }, [t])
   const createChannelSchema = useMemo(() => Yup.object({
@@ -118,11 +118,11 @@ const ChatPage = () => {
     navigate('/login', { replace: true })
   }, [navigate])
 
-  const handleChannelClick = useCallback((id) => {
+  const handleChannelClick = useCallback(id => {
     dispatch(setCurrentChannelId(id))
   }, [dispatch])
 
-  const handleMessageSubmit = useCallback(async (e) => {
+  const handleMessageSubmit = useCallback(async e => {
     e.preventDefault()
     const trimmed = messageBody.trim()
     const channelId = currentChannelId || currentChannel?.id
@@ -150,7 +150,7 @@ const ChatPage = () => {
     }
   }, [])
 
-  const closeModal = useCallback((type) => {
+  const closeModal = useCallback(type => {
     setModals(prev => ({ ...prev, [type]: false }))
 
     if (type === 'rename') {
@@ -160,7 +160,7 @@ const ChatPage = () => {
     }
   }, [])
 
-  const handleDropdownToggle = useCallback((id) => {
+  const handleDropdownToggle = useCallback(id => {
     setDropdownOpenId(prev => prev === id ? null : id)
   }, [])
 
@@ -228,7 +228,7 @@ const ChatPage = () => {
           role="dialog"
           aria-modal="true"
           style={{ display: 'block' }}
-          onMouseDown={(e) => e.target === e.currentTarget && closeModal(type)}
+          onMouseDown={e => e.target === e.currentTarget && closeModal(type)}
         >
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
@@ -251,7 +251,7 @@ const ChatPage = () => {
     )
   }
 
-  const renderChannelItem = (channel) => {
+  const renderChannelItem = channel => {
     const isActive = channel.id === (currentChannelId || currentChannel?.id)
     const isRemovable = channel.removable !== false && channel.id > 2
     const showDropdown = dropdownOpenId === channel.id
@@ -282,11 +282,14 @@ const ChatPage = () => {
               </button>
 
               {showDropdown && (
-                <div className="dropdown-menu show" style={{
-                  position: 'absolute',
-                  inset: '0px auto auto 0px',
-                  transform: 'translate(-8px, 40px)',
-                }}>
+                <div
+                  className="dropdown-menu show"
+                  style={{
+                    position: 'absolute',
+                    inset: '0px auto auto 0px',
+                    transform: 'translate(-8px, 40px)',
+                  }}
+                >
                   <button
                     className="dropdown-item"
                     type="button"
@@ -340,8 +343,8 @@ const ChatPage = () => {
                   aria-label={t('chat.addChannel')}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor" className="bi bi-plus-square">
-                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"/>
-                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+                    <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                   </svg>
                   <span className="visually-hidden">{t('chat.addChannelButton')}</span>
                 </button>
@@ -358,7 +361,10 @@ const ChatPage = () => {
                 {/* Channel header */}
                 <div className="bg-light mb-4 p-3 shadow-sm small">
                   <p className="m-0">
-                    <b># {currentChannel?.name || ''}</b>
+                    <b>
+                      #
+                      {currentChannel?.name || ''}
+                    </b>
                   </p>
                   <span className="text-muted">{getMessageCountText(channelMessages.length)}</span>
                 </div>
@@ -367,7 +373,12 @@ const ChatPage = () => {
                 <div className="chat-messages overflow-auto px-5">
                   {channelMessages.map((msg, idx) => (
                     <div className="text-break mb-2" key={msg.id ?? `${msg.channelId}-${idx}`}>
-                      <b>{msg.username}:</b> {msg.body}
+                      <b>
+                        {msg.username}
+                        :
+                      </b>
+                      {' '}
+                      {msg.body}
                     </div>
                   ))}
                   <div ref={messagesEndRef} />
@@ -389,7 +400,7 @@ const ChatPage = () => {
                         placeholder={status === 'loading' ? t('loading') : t('chat.enterMessage')}
                         className="border-0 p-0 ps-2 form-control"
                         value={messageBody}
-                        onChange={(e) => setMessageBody(e.target.value)}
+                        onChange={e => setMessageBody(e.target.value)}
                         autoComplete="off"
                         disabled={sending === 'loading'}
                         autoFocus
@@ -400,7 +411,7 @@ const ChatPage = () => {
                         className="btn btn-group-vertical"
                       >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
-                          <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"/>
+                          <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
                         </svg>
                         <span className="visually-hidden">{t('chat.send')}</span>
                       </button>
@@ -466,7 +477,7 @@ const ChatPage = () => {
                   id="name"
                   className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
                   autoFocus
-                  onFocus={(e) => e.target.select()}
+                  onFocus={e => e.target.select()}
                 />
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">

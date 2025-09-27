@@ -26,7 +26,9 @@ const NotFoundPage = () => {
           />
           <h1 className="h4 text-muted mb-3">{t('notFound.title')}</h1>
           <p className="text-center">
-            {t('notFound.message')} <Link to="/">{t('notFound.linkText')}</Link>
+            {t('notFound.message')}
+            {' '}
+            <Link to="/">{t('notFound.linkText')}</Link>
           </p>
         </div>
       </div>
