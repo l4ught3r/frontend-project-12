@@ -134,7 +134,7 @@ const ChatPage = () => {
     try {
       await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap()
       setMessageBody('')
-    } catch (error) {
+    } catch (_error) {
       // Ошибка уже обработана в slice
     }
   }, [messageBody, currentChannelId, currentChannel?.id, dispatch])

@@ -48,7 +48,7 @@ const PrivateRoute = () => {
           localStorage.removeItem('username')
           setIsValid(false)
         }
-      } catch (error) {
+      } catch (_error) {
         localStorage.removeItem('token')
         localStorage.removeItem('username')
         setIsValid(false)

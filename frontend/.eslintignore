@@ -1,8 +1,0 @@
-node_modules/
-dist/
-build/
-vite.config.js
-*.config.js
-eslint.config.js
-public/
-coverage/
