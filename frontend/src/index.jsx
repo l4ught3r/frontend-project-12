@@ -5,7 +5,12 @@ import './i18n'
 import App from './Components/App.jsx'
 import store from './store'
 import socket from './socket'
-import { messageReceived, channelReceived, channelRenamed, channelRemoved } from './chatSlice'
+import {
+  messageReceived,
+  channelReceived,
+  channelRenamed,
+  channelRemoved,
+} from './chatSlice'
 if (import.meta.env.DEV) {
   const key = 'devAuthClearedOnce'
   if (!sessionStorage.getItem(key)) {
@@ -26,7 +31,9 @@ socketEvents.forEach(({ event, action }) => {
     store.dispatch(action(payload))
   })
 })
-const root = ReactDOM.createRoot(document.getElementById('root'))
+const root = ReactDOM.createRoot(
+  document.getElementById('root'),
+)
 root.render(
   <Provider store={store}>
     <App />

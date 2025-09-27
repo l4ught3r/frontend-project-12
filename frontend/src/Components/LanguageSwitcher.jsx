@@ -8,9 +8,14 @@ const LanguageSwitcher = () => {
     { code: 'ru', name: 'Русский' },
     { code: 'en', name: 'English' },
   ]
-  const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0]
+  const currentLanguage =
+    languages.find((lang) => lang.code === i18n.language) ||
+    languages[0]
   // Компонент для отображения кода страны с CSS-флагом в кружке
-  const CountryDisplay = ({ language, showName = false }) => {
+  const CountryDisplay = ({
+    language,
+    showName = false,
+  }) => {
     const renderFlag = () => {
       if (language.code === 'ru') {
         // Российский флаг: белый, синий, красный
@@ -25,9 +30,24 @@ const LanguageSwitcher = () => {
               flexDirection: 'column',
             }}
           >
-            <div style={{ flex: 1, backgroundColor: '#ffffff' }} />
-            <div style={{ flex: 1, backgroundColor: '#0052cc' }} />
-            <div style={{ flex: 1, backgroundColor: '#dc143c' }} />
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: '#ffffff',
+              }}
+            />
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: '#0052cc',
+              }}
+            />
+            <div
+              style={{
+                flex: 1,
+                backgroundColor: '#dc143c',
+              }}
+            />
           </div>
         )
       } else if (language.code === 'en') {
@@ -44,42 +64,46 @@ const LanguageSwitcher = () => {
             }}
           >
             {/* Белый крест */}
-            <div style={{
-              position: 'absolute',
-              top: '0',
-              left: '6px',
-              width: '2px',
-              height: '10px',
-              backgroundColor: '#ffffff',
-            }}
+            <div
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '6px',
+                width: '2px',
+                height: '10px',
+                backgroundColor: '#ffffff',
+              }}
             />
-            <div style={{
-              position: 'absolute',
-              top: '4px',
-              left: '0',
-              width: '14px',
-              height: '2px',
-              backgroundColor: '#ffffff',
-            }}
+            <div
+              style={{
+                position: 'absolute',
+                top: '4px',
+                left: '0',
+                width: '14px',
+                height: '2px',
+                backgroundColor: '#ffffff',
+              }}
             />
             {/* Красные полосы */}
-            <div style={{
-              position: 'absolute',
-              top: '4.5px',
-              left: '0',
-              width: '14px',
-              height: '1px',
-              backgroundColor: '#c8102e',
-            }}
+            <div
+              style={{
+                position: 'absolute',
+                top: '4.5px',
+                left: '0',
+                width: '14px',
+                height: '1px',
+                backgroundColor: '#c8102e',
+              }}
             />
-            <div style={{
-              position: 'absolute',
-              top: '0',
-              left: '6.5px',
-              width: '1px',
-              height: '10px',
-              backgroundColor: '#c8102e',
-            }}
+            <div
+              style={{
+                position: 'absolute',
+                top: '0',
+                left: '6.5px',
+                width: '1px',
+                height: '10px',
+                backgroundColor: '#c8102e',
+              }}
             />
           </div>
         )
@@ -88,7 +112,13 @@ const LanguageSwitcher = () => {
     }
     return (
       <div className="d-flex align-items-center">
-        <span className="me-1" style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
+        <span
+          className="me-1"
+          style={{
+            fontSize: '0.75rem',
+            fontWeight: 'bold',
+          }}
+        >
           {language.code.toUpperCase()}
         </span>
         <span
@@ -105,7 +135,9 @@ const LanguageSwitcher = () => {
         >
           {renderFlag()}
         </span>
-        {showName && <span className="ms-2">{language.name}</span>}
+        {showName && (
+          <span className="ms-2">{language.name}</span>
+        )}
       </div>
     )
   }
@@ -120,13 +152,22 @@ const LanguageSwitcher = () => {
   // Закрытие при клике вне компонента
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
         setIsOpen(false)
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener(
+      'mousedown',
+      handleClickOutside,
+    )
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
+      document.removeEventListener(
+        'mousedown',
+        handleClickOutside,
+      )
     }
   }, [])
   // Закрытие при нажатии Escape
@@ -160,7 +201,9 @@ const LanguageSwitcher = () => {
           viewBox="0 0 12 12"
           fill="currentColor"
           style={{
-            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+            transform: isOpen
+              ? 'rotate(180deg)'
+              : 'rotate(0deg)',
             transition: 'transform 0.2s ease',
           }}
         >
@@ -181,12 +224,19 @@ const LanguageSwitcher = () => {
             <button
               key={language.code}
               className={`dropdown-item d-flex align-items-center ${
-                language.code === i18n.language ? 'active' : ''
+                language.code === i18n.language
+                  ? 'active'
+                  : ''
               }`}
-              onClick={() => handleLanguageChange(language.code)}
+              onClick={() =>
+                handleLanguageChange(language.code)
+              }
               type="button"
             >
-              <CountryDisplay language={language} showName={true} />
+              <CountryDisplay
+                language={language}
+                showName={true}
+              />
               {language.code === i18n.language && (
                 <svg
                   className="ms-auto"

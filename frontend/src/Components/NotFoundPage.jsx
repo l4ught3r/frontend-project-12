@@ -9,7 +9,9 @@ const NotFoundPage = () => {
       <div className="h-100 d-flex flex-column">
         <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
           <div className="container">
-            <Link className="navbar-brand" to="/">{t('appName')}</Link>
+            <Link className="navbar-brand" to="/">
+              {t('appName')}
+            </Link>
             <LanguageSwitcher />
           </div>
         </nav>
@@ -20,10 +22,11 @@ const NotFoundPage = () => {
             alt={t('notFound.title')}
             style={{ maxHeight: '300px' }}
           />
-          <h1 className="h4 text-muted mb-3">{t('notFound.title')}</h1>
+          <h1 className="h4 text-muted mb-3">
+            {t('notFound.title')}
+          </h1>
           <p className="text-center">
-            {t('notFound.message')}
-            {' '}
+            {t('notFound.message')}{' '}
             <Link to="/">{t('notFound.linkText')}</Link>
           </p>
         </div>

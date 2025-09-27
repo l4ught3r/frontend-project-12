@@ -9,7 +9,9 @@
     "build": "vite build",
     "serve": "vite preview",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint src --fix"
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@hexlet/chat-server": "^2.0.4",
@@ -34,8 +36,10 @@
     "@stylistic/eslint-plugin": "^5.4.0",
     "@vitejs/plugin-react": "^4.2.1",
     "eslint": "^9.36.0",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^16.4.0",
+    "prettier": "^3.6.2",
     "vite": "^5.1.0"
   }
 }

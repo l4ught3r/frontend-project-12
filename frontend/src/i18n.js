@@ -24,9 +24,12 @@ const resources = {
         loggingIn: 'Вход...',
         errors: {
           required: 'Обязательное поле',
-          usernameMin: 'Имя пользователя должно содержать минимум 3 символа',
-          passwordMin: 'Пароль должен содержать минимум 6 символов',
-          invalidCredentials: 'Неверные имя пользователя или пароль',
+          usernameMin:
+            'Имя пользователя должно содержать минимум 3 символа',
+          passwordMin:
+            'Пароль должен содержать минимум 6 символов',
+          invalidCredentials:
+            'Неверные имя пользователя или пароль',
           invalidFormat: 'Неверный формат данных',
           serverError: 'Ошибка сервера. Попробуйте позже',
           loginFailed: 'Произошла ошибка при входе',
@@ -71,7 +74,8 @@ const resources = {
           },
           removeChannel: {
             title: 'Удалить канал',
-            confirm: 'Вы уверены, что хотите удалить канал?',
+            confirm:
+              'Вы уверены, что хотите удалить канал?',
             delete: 'Удалить',
           },
         },
@@ -123,11 +127,15 @@ const resources = {
         loggingIn: 'Logging in...',
         errors: {
           required: 'Required field',
-          usernameMin: 'Username must contain at least 3 characters',
-          passwordMin: 'Password must contain at least 6 characters',
-          invalidCredentials: 'Invalid username or password',
+          usernameMin:
+            'Username must contain at least 3 characters',
+          passwordMin:
+            'Password must contain at least 6 characters',
+          invalidCredentials:
+            'Invalid username or password',
           invalidFormat: 'Invalid data format',
-          serverError: 'Server error. Please try again later',
+          serverError:
+            'Server error. Please try again later',
           loginFailed: 'Login failed',
         },
       },
@@ -144,7 +152,8 @@ const resources = {
           passwordMin: 'At least 6 characters',
           passwordMatch: 'Passwords must match',
           userExists: 'User already exists',
-          serverError: 'Server error. Please try again later',
+          serverError:
+            'Server error. Please try again later',
           signupFailed: 'Failed to sign up',
         },
       },
@@ -168,7 +177,8 @@ const resources = {
           },
           removeChannel: {
             title: 'Remove channel',
-            confirm: 'Are you sure you want to remove this channel?',
+            confirm:
+              'Are you sure you want to remove this channel?',
             delete: 'Remove',
           },
         },
@@ -198,14 +208,12 @@ const resources = {
     },
   },
 }
-i18n
-  .use(initReactI18next)
-  .init({
-    resources,
-    lng: 'ru',
-    fallbackLng: 'ru',
-    interpolation: {
-      escapeValue: false,
-    },
-  })
+i18n.use(initReactI18next).init({
+  resources,
+  lng: 'ru',
+  fallbackLng: 'ru',
+  interpolation: {
+    escapeValue: false,
+  },
+})
 export default i18n
