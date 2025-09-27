@@ -25,7 +25,7 @@ const ChatPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { channels, messages, status, sending, currentChannelId } = useSelector(state => state.chat)
+  const { channels, messages, status, sending, currentChannelId } = useSelector((state) => state.chat)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const [messageBody, setMessageBody] = useState('')
@@ -38,43 +38,43 @@ const ChatPage = () => {
   const [renameData, setRenameData] = useState({ id: null, name: '' })
   const [removeTargetId, setRemoveTargetId] = useState(null)
   const currentChannel = useMemo(() =>
-    channels.find(c => c.id === currentChannelId) || channels[0] || {},
+    channels.find((c) => c.id === currentChannelId) || channels[0] || {},
   [channels, currentChannelId],
   )
   const channelMessages = useMemo(() =>
-    messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)),
+    messages.filter((m) => m.channelId === (currentChannelId || currentChannel?.id)),
   [messages, currentChannelId, currentChannel?.id],
   )
-  const getMessageCountText = useCallback(count => {
+  const getMessageCountText = useCallback((count) => {
     return t('chat.messageCount', { count })
   }, [t])
   const createChannelSchema = useMemo(() => Yup.object({
     name: Yup.string()
-      .transform(v => v?.trim())
+      .transform((v) => v?.trim())
       .min(3, t('chat.validation.length'))
       .max(20, t('chat.validation.length'))
-      .test('unique', t('chat.validation.unique'), value => {
+      .test('unique', t('chat.validation.unique'), (value) => {
         const trimmed = value?.trim().toLowerCase()
-        return !trimmed || !channels.some(c => c.name?.trim().toLowerCase() === trimmed)
+        return !trimmed || !channels.some((c) => c.name?.trim().toLowerCase() === trimmed)
       })
       .required(t('chat.validation.required')),
   }), [channels, t])
   const renameChannelSchema = useMemo(() => Yup.object({
     name: Yup.string()
-      .transform(v => v?.trim())
+      .transform((v) => v?.trim())
       .min(3, t('chat.validation.length'))
       .max(20, t('chat.validation.length'))
-      .test('unique', t('chat.validation.unique'), value => {
+      .test('unique', t('chat.validation.unique'), (value) => {
         const trimmed = value?.trim().toLowerCase()
         if (!trimmed) return true
         // Проверяем, что имя отличается от текущего
-        const currentChannel = channels.find(c => c.id === renameData.id)
+        const currentChannel = channels.find((c) => c.id === renameData.id)
         const currentName = currentChannel?.name?.trim().toLowerCase()
         if (trimmed === currentName) {
           return false // То же имя - показываем ошибку
         }
         // Проверяем уникальность среди других каналов
-        return !channels.some(c =>
+        return !channels.some((c) =>
           c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed,
         )
       })
@@ -104,10 +104,10 @@ const ChatPage = () => {
     localStorage.removeItem('username')
     navigate('/login', { replace: true })
   }, [navigate])
-  const handleChannelClick = useCallback(id => {
+  const handleChannelClick = useCallback((id) => {
     dispatch(setCurrentChannelId(id))
   }, [dispatch])
-  const handleMessageSubmit = useCallback(async e => {
+  const handleMessageSubmit = useCallback(async (e) => {
     e.preventDefault()
     const trimmed = messageBody.trim()
     const channelId = currentChannelId || currentChannel?.id
@@ -121,7 +121,7 @@ const ChatPage = () => {
     }
   }, [messageBody, currentChannelId, currentChannel?.id, dispatch])
   const openModal = useCallback((type, data = {}) => {
-    setModals(prev => ({ ...prev, [type]: true }))
+    setModals((prev) => ({ ...prev, [type]: true }))
     setDropdownOpenId(null)
     if (type === 'rename') {
       setRenameData(data)
@@ -129,16 +129,16 @@ const ChatPage = () => {
       setRemoveTargetId(data.id)
     }
   }, [])
-  const closeModal = useCallback(type => {
-    setModals(prev => ({ ...prev, [type]: false }))
+  const closeModal = useCallback((type) => {
+    setModals((prev) => ({ ...prev, [type]: false }))
     if (type === 'rename') {
       setRenameData({ id: null, name: '' })
     } else if (type === 'remove') {
       setRemoveTargetId(null)
     }
   }, [])
-  const handleDropdownToggle = useCallback(id => {
-    setDropdownOpenId(prev => prev === id ? null : id)
+  const handleDropdownToggle = useCallback((id) => {
+    setDropdownOpenId((prev) => prev === id ? null : id)
   }, [])
   const handleCreateChannel = useCallback(async (values, { setSubmitting, resetForm }) => {
     const name = values.name?.trim()
@@ -195,7 +195,7 @@ const ChatPage = () => {
           role="dialog"
           aria-modal="true"
           style={{ display: 'block' }}
-          onMouseDown={e => e.target === e.currentTarget && closeModal(type)}
+          onMouseDown={(e) => e.target === e.currentTarget && closeModal(type)}
         >
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
@@ -217,7 +217,7 @@ const ChatPage = () => {
       </>
     )
   }
-  const renderChannelItem = channel => {
+  const renderChannelItem = (channel) => {
     const isActive = channel.id === (currentChannelId || currentChannel?.id)
     const isRemovable = channel.removable !== false && channel.id > 2
     const showDropdown = dropdownOpenId === channel.id
@@ -357,7 +357,7 @@ const ChatPage = () => {
                         placeholder={status === 'loading' ? t('loading') : t('chat.enterMessage')}
                         className="border-0 p-0 ps-2 form-control"
                         value={messageBody}
-                        onChange={e => setMessageBody(e.target.value)}
+                        onChange={(e) => setMessageBody(e.target.value)}
                         autoComplete="off"
                         disabled={sending === 'loading'}
                         autoFocus
@@ -432,7 +432,7 @@ const ChatPage = () => {
                   id="name"
                   className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
                   autoFocus
-                  onFocus={e => e.target.select()}
+                  onFocus={(e) => e.target.select()}
                 />
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
