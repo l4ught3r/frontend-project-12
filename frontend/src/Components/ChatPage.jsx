@@ -423,12 +423,13 @@ const ChatPage = () => {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form>
+                <label htmlFor="name" className="visually-hidden">{t('chat.modals.addChannel.channelName')}</label>
                 <Field
                   name="name"
+                  id="name"
                   className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
                   autoFocus
                 />
-                <label className="visually-hidden" htmlFor="name">{t('chat.modals.addChannel.channelName')}</label>
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button 
@@ -459,13 +460,14 @@ const ChatPage = () => {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form>
+                <label htmlFor="name" className="visually-hidden">{t('chat.modals.renameChannel.channelName')}</label>
                 <Field
                   name="name"
+                  id="name"
                   className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
                   autoFocus
                   onFocus={(e) => e.target.select()}
                 />
-                <label className="visually-hidden" htmlFor="name">{t('chat.modals.renameChannel.channelName')}</label>
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button 
