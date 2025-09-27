@@ -24,5 +24,3 @@ export const getProfanityWords = (text) => {
   }
   return LeoProfanity.list(text);
 };
-
- 

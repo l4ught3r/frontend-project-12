@@ -10,15 +10,15 @@ const resources = {
       submit: 'Отправить',
       close: 'Закрыть',
       logout: 'Выйти',
-      
+
       nav: {
         noAccount: 'Нет аккаунта?',
         hasAccount: 'Уже есть аккаунт?',
         signup: 'Регистрация',
         login: 'Войти',
-        toMainPage: 'на главную страницу'
+        toMainPage: 'на главную страницу',
       },
-      
+
       login: {
         title: 'Войти',
         username: 'Ваш ник',
@@ -32,10 +32,10 @@ const resources = {
           invalidCredentials: 'Неверные имя пользователя или пароль',
           invalidFormat: 'Неверный формат данных',
           serverError: 'Ошибка сервера. Попробуйте позже',
-          loginFailed: 'Произошла ошибка при входе'
-        }
+          loginFailed: 'Произошла ошибка при входе',
+        },
       },
-      
+
       signup: {
         title: 'Регистрация',
         username: 'Имя пользователя',
@@ -50,10 +50,10 @@ const resources = {
           passwordMatch: 'Пароли должны совпадать',
           userExists: 'Такой пользователь уже существует',
           serverError: 'Ошибка сервера. Попробуйте позже',
-          signupFailed: 'Не удалось зарегистрироваться'
-        }
+          signupFailed: 'Не удалось зарегистрироваться',
+        },
       },
-      
+
       chat: {
         channels: 'Каналы',
         addChannel: 'Добавить канал',
@@ -65,41 +65,40 @@ const resources = {
         enterMessage: 'Введите сообщение...',
         send: 'Отправить',
         channelManagement: 'Управление каналом',
-        
+
         modals: {
           addChannel: {
             title: 'Добавить канал',
-            channelName: 'Имя канала'
+            channelName: 'Имя канала',
           },
           renameChannel: {
             title: 'Переименовать канал',
-            channelName: 'Имя канала'
+            channelName: 'Имя канала',
           },
           removeChannel: {
             title: 'Удалить канал',
             confirm: 'Вы уверены, что хотите удалить канал?',
-            delete: 'Удалить'
-          }
+            delete: 'Удалить',
+          },
         },
-        
+
         actions: {
           rename: 'Переименовать',
-          delete: 'Удалить'
+          delete: 'Удалить',
         },
-        
+
         validation: {
           required: 'Обязательное поле',
           length: 'От 3 до 20 символов',
-          unique: 'Имя должно быть уникальным'
-        }
+          unique: 'Имя должно быть уникальным',
+        },
       },
-      
+
       notFound: {
         title: 'Страница не найдена',
         message: 'Но вы можете перейти',
-        linkText: 'на главную страницу'
+        linkText: 'на главную страницу',
       },
-
 
       notifications: {
         channelCreated: 'Канал создан',
@@ -107,9 +106,9 @@ const resources = {
         channelRemoved: 'Канал удалён',
         networkError: 'Ошибка соединения',
         loadingError: 'Ошибка загрузки данных',
-        connectionError: 'Ошибка соединения'
-      }
-    }
+        connectionError: 'Ошибка соединения',
+      },
+    },
   },
   en: {
     translation: {
@@ -119,15 +118,15 @@ const resources = {
       submit: 'Submit',
       close: 'Close',
       logout: 'Logout',
-      
+
       nav: {
         noAccount: "Don't have an account?",
         hasAccount: 'Already have an account?',
         signup: 'Sign up',
         login: 'Log in',
-        toMainPage: 'to the main page'
+        toMainPage: 'to the main page',
       },
-      
+
       login: {
         title: 'Log in',
         username: 'Your username',
@@ -141,10 +140,10 @@ const resources = {
           invalidCredentials: 'Invalid username or password',
           invalidFormat: 'Invalid data format',
           serverError: 'Server error. Please try again later',
-          loginFailed: 'Login failed'
-        }
+          loginFailed: 'Login failed',
+        },
       },
-      
+
       signup: {
         title: 'Sign up',
         username: 'Username',
@@ -159,10 +158,10 @@ const resources = {
           passwordMatch: 'Passwords must match',
           userExists: 'User already exists',
           serverError: 'Server error. Please try again later',
-          signupFailed: 'Failed to sign up'
-        }
+          signupFailed: 'Failed to sign up',
+        },
       },
-      
+
       chat: {
         channels: 'Channels',
         addChannel: 'Add channel',
@@ -172,39 +171,39 @@ const resources = {
         enterMessage: 'Enter message...',
         send: 'Send',
         channelManagement: 'Channel management',
-        
+
         modals: {
           addChannel: {
             title: 'Add channel',
-            channelName: 'Channel name'
+            channelName: 'Channel name',
           },
           renameChannel: {
             title: 'Rename channel',
-            channelName: 'Channel name'
+            channelName: 'Channel name',
           },
           removeChannel: {
             title: 'Remove channel',
             confirm: 'Are you sure you want to remove this channel?',
-            delete: 'Remove'
-          }
+            delete: 'Remove',
+          },
         },
-        
+
         actions: {
           rename: 'Rename',
-          delete: 'Remove'
+          delete: 'Remove',
         },
-        
+
         validation: {
           required: 'Required field',
           length: 'From 3 to 20 characters',
-          unique: 'Name must be unique'
-        }
+          unique: 'Name must be unique',
+        },
       },
-      
+
       notFound: {
         title: 'Page not found',
         message: 'But you can go',
-        linkText: 'to the main page'
+        linkText: 'to the main page',
       },
 
       notifications: {
@@ -213,10 +212,10 @@ const resources = {
         channelRemoved: 'Channel removed',
         networkError: 'Network error',
         loadingError: 'Data loading error',
-        connectionError: 'Connection error'
-      }
-    }
-  }
+        connectionError: 'Connection error',
+      },
+    },
+  },
 };
 
 i18n
@@ -225,10 +224,10 @@ i18n
     resources,
     lng: 'ru',
     fallbackLng: 'ru',
-    
+
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
 
-export default i18n; 
+export default i18n;

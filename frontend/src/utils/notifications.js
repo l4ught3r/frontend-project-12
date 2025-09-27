@@ -47,4 +47,4 @@ export const notifyLoadingError = (t) => {
 
 export const notifyConnectionError = (t) => {
   showError(t('notifications.connectionError'));
-}; 
+};

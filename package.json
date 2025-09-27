@@ -20,10 +20,6 @@
   },
   "homepage": "https://github.com/l4ught3r/frontend-project-12#readme",
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.4",
-    "@reduxjs/toolkit": "^2.8.2",
-    "bootstrap": "^5.3.7",
-    "formik": "^2.4.6",
-    "react-redux": "^9.2.0"
+    "@hexlet/chat-server": "^2.0.4"
   }
 }
