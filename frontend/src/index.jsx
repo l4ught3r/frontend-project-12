@@ -1,4 +1,4 @@
-import React from 'react'
+
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import './index.css'
@@ -26,7 +26,7 @@ const socketEvents = [
 
 socketEvents.forEach(({ event, action }) => {
   socket.off(event)
-  socket.on(event, payload => {
+  socket.on(event, (payload) => {
     store.dispatch(action(payload))
   })
 })

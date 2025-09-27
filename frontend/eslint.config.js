@@ -1,24 +1,23 @@
-import js from "@eslint/js";
-import globals from "globals";
-import pluginReact from "eslint-plugin-react";
+import js from '@eslint/js'
+import globals from 'globals'
+import pluginReact from 'eslint-plugin-react'
+import stylistic from '@stylistic/eslint-plugin'
 
 export default [
   {
-    files: ["**/*.{js,mjs,cjs,jsx}"],
+    files: ['**/*.{js,mjs,cjs,jsx}'],
     ignores: [
-      "dist/**",
-      "build/**", 
-      "node_modules/**",
-      "coverage/**",
-      ".cache/**",
-      ".parcel-cache/**",
-      "*.config.js",
-      "vite.config.js"
+      'dist/**',
+      'build/**',
+      'node_modules/**',
+      'coverage/**',
+      '.cache/**',
+      '.parcel-cache/**',
     ],
     languageOptions: {
       globals: globals.browser,
       ecmaVersion: 2022,
-      sourceType: "module",
+      sourceType: 'module',
       parserOptions: {
         ecmaFeatures: {
           jsx: true,
@@ -27,22 +26,31 @@ export default [
     },
     plugins: {
       react: pluginReact,
+      '@stylistic': stylistic,
     },
     rules: {
       ...js.configs.recommended.rules,
       ...pluginReact.configs.recommended.rules,
-      "react/prop-types": "off", // Отключаем проверку prop-types
-      "react/react-in-jsx-scope": "off", // Не требуем импорт React в каждом файле (React 17+)
-      "no-unused-vars": ["error", { 
-        "argsIgnorePattern": "^_", 
-        "varsIgnorePattern": "^_",
-        "caughtErrorsIgnorePattern": "^_"
-      }], // Игнорируем переменные начинающиеся с _
+      'react/prop-types': 'off',
+      'react/react-in-jsx-scope': 'off',
+      'no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+        caughtErrorsIgnorePattern: '^_',
+      }],
+      '@stylistic/quotes': ['error', 'single'],
+      '@stylistic/semi': ['error', 'never'],
+      '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/no-trailing-spaces': 'error',
+      '@stylistic/eol-last': ['error', 'always'],
+      '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: true }],
+      '@stylistic/arrow-parens': ['error', 'always'],
+      '@stylistic/quote-props': ['error', 'as-needed'],
     },
     settings: {
       react: {
-        version: "detect", // Автоматически определяем версию React
+        version: 'detect',
       },
     },
   },
-];
+]

@@ -11,14 +11,14 @@ export const filterProfanity = (text, replacement = '*') => {
   return LeoProfanity.clean(text, replacement)
 }
 
-export const containsProfanity = text => {
+export const containsProfanity = (text) => {
   if (!text || typeof text !== 'string') {
     return false
   }
   return LeoProfanity.check(text)
 }
 
-export const getProfanityWords = text => {
+export const getProfanityWords = (text) => {
   if (!text || typeof text !== 'string') {
     return []
   }

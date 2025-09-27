@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 const LanguageSwitcher = () => {
@@ -11,7 +11,7 @@ const LanguageSwitcher = () => {
     { code: 'en', name: 'English' },
   ]
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
+  const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0]
 
   // Компонент для отображения кода страны с CSS-флагом в кружке
   const CountryDisplay = ({ language, showName = false }) => {
@@ -115,7 +115,7 @@ const LanguageSwitcher = () => {
     )
   }
 
-  const handleLanguageChange = langCode => {
+  const handleLanguageChange = (langCode) => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
     localStorage.setItem('language', langCode)
@@ -127,7 +127,7 @@ const LanguageSwitcher = () => {
 
   // Закрытие при клике вне компонента
   useEffect(() => {
-    const handleClickOutside = event => {
+    const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false)
       }
@@ -141,7 +141,7 @@ const LanguageSwitcher = () => {
 
   // Закрытие при нажатии Escape
   useEffect(() => {
-    const handleEscape = event => {
+    const handleEscape = (event) => {
       if (event.key === 'Escape') {
         setIsOpen(false)
       }
@@ -190,7 +190,7 @@ const LanguageSwitcher = () => {
             zIndex: 1050,
           }}
         >
-          {languages.map(language => (
+          {languages.map((language) => (
             <button
               key={language.code}
               className={`dropdown-item d-flex align-items-center ${
