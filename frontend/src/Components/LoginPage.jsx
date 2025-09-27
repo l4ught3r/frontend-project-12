@@ -1,43 +1,43 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import avatar from '../assets/loginImage.jpg';
-import LanguageSwitcher from './LanguageSwitcher';
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Formik, Form, Field } from 'formik'
+import { useTranslation } from 'react-i18next'
+import axios from 'axios'
+import avatar from '../assets/loginImage.jpg'
+import LanguageSwitcher from './LanguageSwitcher'
 
 const LoginPage = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     if (token) {
-      navigate('/', { replace: true });
+      navigate('/', { replace: true })
     }
-  }, [navigate]);
+  }, [navigate])
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    setError('');
-    
+    setError('')
+
     try {
-      const response = await axios.post('/api/v1/login', values);
-      const { token, username } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', username || values.username);
-      
-      localStorage.removeItem('chatMessages');
-      localStorage.removeItem('chatChannels');
-      
-      navigate('/', { replace: true });
+      const response = await axios.post('/api/v1/login', values)
+      const { token, username } = response.data
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', username || values.username)
+
+      localStorage.removeItem('chatMessages')
+      localStorage.removeItem('chatChannels')
+
+      navigate('/', { replace: true })
     } catch (err) {
-      setError(t('login.errors.invalidCredentials'));
+      setError(t('login.errors.invalidCredentials'))
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <div className="h-100 bg-light">
@@ -49,7 +49,7 @@ const LoginPage = () => {
               <LanguageSwitcher />
             </div>
           </nav>
-          
+
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">
@@ -58,7 +58,7 @@ const LoginPage = () => {
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                       <img src={avatar} className="rounded-circle" alt="Войти" />
                     </div>
-                    
+
                     <Formik
                       initialValues={{ username: '', password: '' }}
                       onSubmit={handleSubmit}
@@ -66,7 +66,7 @@ const LoginPage = () => {
                       {({ isSubmitting }) => (
                         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
                           <h1 className="text-center mb-4">{t('login.title')}</h1>
-                          
+
                           <div className="form-floating mb-3">
                             <Field
                               name="username"
@@ -80,7 +80,7 @@ const LoginPage = () => {
                             />
                             <label htmlFor="username">{t('login.username')}</label>
                           </div>
-                          
+
                           <div className="form-floating mb-4">
                             <Field
                               name="password"
@@ -93,13 +93,13 @@ const LoginPage = () => {
                             />
                             <label htmlFor="password">{t('login.password')}</label>
                           </div>
-                          
+
                           {error && (
                             <div className="alert alert-danger" role="alert">
                               {error}
                             </div>
                           )}
-                          
+
                           <button
                             type="submit"
                             className="w-100 mb-3 btn btn-outline-primary"
@@ -111,7 +111,7 @@ const LoginPage = () => {
                       )}
                     </Formik>
                   </div>
-                  
+
                   <div className="card-footer p-4">
                     <div className="text-center">
                       <span>{t('nav.noAccount')} </span>
@@ -125,7 +125,7 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default LoginPage;
+export default LoginPage

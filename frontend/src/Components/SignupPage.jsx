@@ -1,23 +1,23 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
-import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
-import axios from 'axios';
-import avatar from '../assets/signupImage.jpg';
-import LanguageSwitcher from './LanguageSwitcher';
+import React, { useEffect, useState, useMemo } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Formik, Form, Field } from 'formik'
+import { useTranslation } from 'react-i18next'
+import * as Yup from 'yup'
+import axios from 'axios'
+import avatar from '../assets/signupImage.jpg'
+import LanguageSwitcher from './LanguageSwitcher'
 
 const SignupPage = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [error, setError] = useState('')
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     if (token) {
-      navigate('/', { replace: true });
+      navigate('/', { replace: true })
     }
-  }, [navigate]);
+  }, [navigate])
 
   const validationSchema = useMemo(() => Yup.object({
     username: Yup.string()
@@ -30,37 +30,37 @@ const SignupPage = () => {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password')], t('signup.errors.passwordMatch'))
       .required(t('signup.errors.required')),
-  }), [t]);
+  }), [t])
 
   const handleSubmit = async (values, { setSubmitting }) => {
-    setError('');
-    
+    setError('')
+
     try {
-      const { username, password } = values;
-      const response = await axios.post('/api/v1/signup', { username, password });
-      const { token, username: responseUsername } = response.data;
-      
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', responseUsername || username);
-      
-      localStorage.removeItem('chatMessages');
-      localStorage.removeItem('chatChannels');
-      
-      navigate('/', { replace: true });
+      const { username, password } = values
+      const response = await axios.post('/api/v1/signup', { username, password })
+      const { token, username: responseUsername } = response.data
+
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', responseUsername || username)
+
+      localStorage.removeItem('chatMessages')
+      localStorage.removeItem('chatChannels')
+
+      navigate('/', { replace: true })
     } catch (err) {
-      const status = err.response?.status;
-      
+      const status = err.response?.status
+
       if (status === 409) {
-        setError(t('signup.errors.userExists'));
+        setError(t('signup.errors.userExists'))
       } else if (status >= 500) {
-        setError(t('signup.errors.serverError'));
+        setError(t('signup.errors.serverError'))
       } else {
-        setError(t('signup.errors.signupFailed'));
+        setError(t('signup.errors.signupFailed'))
       }
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
 
   return (
     <div className="h-100 bg-light">
@@ -72,7 +72,7 @@ const SignupPage = () => {
               <LanguageSwitcher />
             </div>
           </nav>
-          
+
           <div className="container-fluid h-100">
             <div className="row justify-content-center align-content-center h-100">
               <div className="col-12 col-md-8 col-xxl-6">
@@ -81,7 +81,7 @@ const SignupPage = () => {
                     <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
                       <img src={avatar} className="rounded-circle" alt="Регистрация" />
                     </div>
-                    
+
                     <Formik
                       initialValues={{ username: '', password: '', confirmPassword: '' }}
                       validationSchema={validationSchema}
@@ -90,7 +90,7 @@ const SignupPage = () => {
                       {({ isSubmitting, errors, touched }) => (
                         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
                           <h1 className="text-center mb-4">{t('signup.title')}</h1>
-                          
+
                           <div className="form-floating mb-3">
                             <Field
                               name="username"
@@ -107,7 +107,7 @@ const SignupPage = () => {
                               <div className="invalid-tooltip">{errors.username}</div>
                             )}
                           </div>
-                          
+
                           <div className="form-floating mb-3">
                             <Field
                               name="password"
@@ -123,7 +123,7 @@ const SignupPage = () => {
                               <div className="invalid-tooltip">{errors.password}</div>
                             )}
                           </div>
-                          
+
                           <div className="form-floating mb-4">
                             <Field
                               name="confirmPassword"
@@ -139,13 +139,13 @@ const SignupPage = () => {
                               <div className="invalid-tooltip">{errors.confirmPassword}</div>
                             )}
                           </div>
-                          
+
                           {error && (
                             <div className="alert alert-danger" role="alert">
                               {error}
                             </div>
                           )}
-                          
+
                           <button
                             type="submit"
                             className="w-100 mb-3 btn btn-outline-primary"
@@ -157,7 +157,7 @@ const SignupPage = () => {
                       )}
                     </Formik>
                   </div>
-                  
+
                   <div className="card-footer p-4">
                     <div className="text-center">
                       <span>{t('nav.hasAccount')} </span>
@@ -171,7 +171,7 @@ const SignupPage = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SignupPage;
+export default SignupPage

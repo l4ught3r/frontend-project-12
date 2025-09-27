@@ -1,5 +1,5 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
 
 const resources = {
   ru: {
@@ -120,7 +120,7 @@ const resources = {
       logout: 'Logout',
 
       nav: {
-        noAccount: "Don't have an account?",
+        noAccount: 'Don\'t have an account?',
         hasAccount: 'Already have an account?',
         signup: 'Sign up',
         login: 'Log in',
@@ -216,7 +216,7 @@ const resources = {
       },
     },
   },
-};
+}
 
 i18n
   .use(initReactI18next)
@@ -228,6 +228,6 @@ i18n
     interpolation: {
       escapeValue: false,
     },
-  });
+  })
 
-export default i18n;
+export default i18n
