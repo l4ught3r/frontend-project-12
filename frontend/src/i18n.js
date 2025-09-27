@@ -1,6 +1,5 @@
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
-
 const resources = {
   ru: {
     translation: {
@@ -10,7 +9,6 @@ const resources = {
       submit: 'Отправить',
       close: 'Закрыть',
       logout: 'Выйти',
-
       nav: {
         noAccount: 'Нет аккаунта?',
         hasAccount: 'Уже есть аккаунт?',
@@ -18,7 +16,6 @@ const resources = {
         login: 'Войти',
         toMainPage: 'на главную страницу',
       },
-
       login: {
         title: 'Войти',
         username: 'Ваш ник',
@@ -35,7 +32,6 @@ const resources = {
           loginFailed: 'Произошла ошибка при входе',
         },
       },
-
       signup: {
         title: 'Регистрация',
         username: 'Имя пользователя',
@@ -53,7 +49,6 @@ const resources = {
           signupFailed: 'Не удалось зарегистрироваться',
         },
       },
-
       chat: {
         channels: 'Каналы',
         addChannel: 'Добавить канал',
@@ -65,7 +60,6 @@ const resources = {
         enterMessage: 'Введите сообщение...',
         send: 'Отправить',
         channelManagement: 'Управление каналом',
-
         modals: {
           addChannel: {
             title: 'Добавить канал',
@@ -81,25 +75,21 @@ const resources = {
             delete: 'Удалить',
           },
         },
-
         actions: {
           rename: 'Переименовать',
           delete: 'Удалить',
         },
-
         validation: {
           required: 'Обязательное поле',
           length: 'От 3 до 20 символов',
           unique: 'Имя должно быть уникальным',
         },
       },
-
       notFound: {
         title: 'Страница не найдена',
         message: 'Но вы можете перейти',
         linkText: 'на главную страницу',
       },
-
       notifications: {
         channelCreated: 'Канал создан',
         channelRenamed: 'Канал переименован',
@@ -118,7 +108,6 @@ const resources = {
       submit: 'Submit',
       close: 'Close',
       logout: 'Logout',
-
       nav: {
         noAccount: 'Don\'t have an account?',
         hasAccount: 'Already have an account?',
@@ -126,7 +115,6 @@ const resources = {
         login: 'Log in',
         toMainPage: 'to the main page',
       },
-
       login: {
         title: 'Log in',
         username: 'Your username',
@@ -143,7 +131,6 @@ const resources = {
           loginFailed: 'Login failed',
         },
       },
-
       signup: {
         title: 'Sign up',
         username: 'Username',
@@ -161,7 +148,6 @@ const resources = {
           signupFailed: 'Failed to sign up',
         },
       },
-
       chat: {
         channels: 'Channels',
         addChannel: 'Add channel',
@@ -171,7 +157,6 @@ const resources = {
         enterMessage: 'Enter message...',
         send: 'Send',
         channelManagement: 'Channel management',
-
         modals: {
           addChannel: {
             title: 'Add channel',
@@ -187,25 +172,21 @@ const resources = {
             delete: 'Remove',
           },
         },
-
         actions: {
           rename: 'Rename',
           delete: 'Remove',
         },
-
         validation: {
           required: 'Required field',
           length: 'From 3 to 20 characters',
           unique: 'Name must be unique',
         },
       },
-
       notFound: {
         title: 'Page not found',
         message: 'But you can go',
         linkText: 'to the main page',
       },
-
       notifications: {
         channelCreated: 'Channel created',
         channelRenamed: 'Channel renamed',
@@ -217,17 +198,14 @@ const resources = {
     },
   },
 }
-
 i18n
   .use(initReactI18next)
   .init({
     resources,
     lng: 'ru',
     fallbackLng: 'ru',
-
     interpolation: {
       escapeValue: false,
     },
   })
-
 export default i18n

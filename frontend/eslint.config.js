@@ -2,7 +2,6 @@ import js from '@eslint/js'
 import globals from 'globals'
 import pluginReact from 'eslint-plugin-react'
 import stylistic from '@stylistic/eslint-plugin'
-
 export default [
   {
     files: ['**/*.{js,mjs,cjs,jsx}'],
@@ -13,6 +12,7 @@ export default [
       'coverage/**',
       '.cache/**',
       '.parcel-cache/**',
+      'vite.config.js',
     ],
     languageOptions: {
       globals: globals.browser,
@@ -44,7 +44,8 @@ export default [
       '@stylistic/no-trailing-spaces': 'error',
       '@stylistic/eol-last': ['error', 'always'],
       '@stylistic/brace-style': ['error', '1tbs', { allowSingleLine: true }],
-      '@stylistic/arrow-parens': ['error', 'always'],
+      '@stylistic/arrow-parens': ['error', 'as-needed'],
+      '@stylistic/no-multiple-empty-lines': ['error', { max: 0, maxBOF: 0, maxEOF: 0 }],
       '@stylistic/quote-props': ['error', 'as-needed'],
     },
     settings: {

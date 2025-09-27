@@ -1,18 +1,14 @@
 import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-
 const LanguageSwitcher = () => {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const dropdownRef = useRef(null)
-
   const languages = [
     { code: 'ru', name: 'Русский' },
     { code: 'en', name: 'English' },
   ]
-
-  const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0]
-
+  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0]
   // Компонент для отображения кода страны с CSS-флагом в кружке
   const CountryDisplay = ({ language, showName = false }) => {
     const renderFlag = () => {
@@ -90,7 +86,6 @@ const LanguageSwitcher = () => {
       }
       return null
     }
-
     return (
       <div className="d-flex align-items-center">
         <span className="me-1" style={{ fontSize: '0.75rem', fontWeight: 'bold' }}>
@@ -114,45 +109,38 @@ const LanguageSwitcher = () => {
       </div>
     )
   }
-
-  const handleLanguageChange = (langCode) => {
+  const handleLanguageChange = langCode => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
     localStorage.setItem('language', langCode)
   }
-
   const toggleDropdown = () => {
     setIsOpen(!isOpen)
   }
-
   // Закрытие при клике вне компонента
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = event => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false)
       }
     }
-
     document.addEventListener('mousedown', handleClickOutside)
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
-
   // Закрытие при нажатии Escape
   useEffect(() => {
-    const handleEscape = (event) => {
+    const handleEscape = event => {
       if (event.key === 'Escape') {
         setIsOpen(false)
       }
     }
-
     document.addEventListener('keydown', handleEscape)
     return () => {
       document.removeEventListener('keydown', handleEscape)
     }
   }, [])
-
   return (
     <div className="dropdown" ref={dropdownRef}>
       <button
@@ -179,7 +167,6 @@ const LanguageSwitcher = () => {
           <path d="M2 4l4 4 4-4H2z" />
         </svg>
       </button>
-
       {isOpen && (
         <div
           className="dropdown-menu show position-absolute"
@@ -190,7 +177,7 @@ const LanguageSwitcher = () => {
             zIndex: 1050,
           }}
         >
-          {languages.map((language) => (
+          {languages.map(language => (
             <button
               key={language.code}
               className={`dropdown-item d-flex align-items-center ${
@@ -218,5 +205,4 @@ const LanguageSwitcher = () => {
     </div>
   )
 }
-
 export default LanguageSwitcher

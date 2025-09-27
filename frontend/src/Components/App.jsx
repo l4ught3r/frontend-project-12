@@ -8,7 +8,6 @@ import LoginPage from './LoginPage'
 import SignupPage from './SignupPage'
 import NotFound from './NotFoundPage'
 import ChatPage from './ChatPage'
-
 const rollbarConfig = {
   accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN || 'b3f75409edff4a71b8940185b1611576',
   environment: import.meta.env.VITE_ROLLBAR_ENVIRONMENT || import.meta.env.MODE || 'testenv',
@@ -23,24 +22,20 @@ const rollbarConfig = {
     },
   },
 }
-
 const PrivateRoute = () => {
   const token = localStorage.getItem('token')
   const [isValidating, setIsValidating] = React.useState(true)
   const [isValid, setIsValid] = React.useState(false)
-
   React.useEffect(() => {
     const validateToken = async () => {
       if (!token) {
         setIsValidating(false)
         return
       }
-
       try {
         const response = await fetch('/api/v1/channels', {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         if (response.ok) {
           setIsValid(true)
         } else {
@@ -48,18 +43,15 @@ const PrivateRoute = () => {
           localStorage.removeItem('username')
           setIsValid(false)
         }
-      } catch (_error) {
+      } catch {
         localStorage.removeItem('token')
         localStorage.removeItem('username')
         setIsValid(false)
       }
-
       setIsValidating(false)
     }
-
     validateToken()
   }, [token])
-
   if (isValidating) {
     return (
       <div className="d-flex justify-content-center align-items-center vh-100">
@@ -69,10 +61,8 @@ const PrivateRoute = () => {
       </div>
     )
   }
-
   return isValid ? <Outlet /> : <Navigate to="/login" replace />
 }
-
 const App = () => {
   return (
     <Provider config={rollbarConfig}>
@@ -103,5 +93,4 @@ const App = () => {
     </Provider>
   )
 }
-
 export default App
