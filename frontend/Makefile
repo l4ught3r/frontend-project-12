@@ -8,7 +8,7 @@ build:
 	npm run build
 	
 dev:
-	make start-backend & make start-frontend
+	npm run dev
 		
 lint:
 	npx eslint --ext js,jsx --no-eslintrc --config .eslintrc.yml .
