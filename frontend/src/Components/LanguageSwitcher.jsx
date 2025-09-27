@@ -1,21 +1,16 @@
-import { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 const LanguageSwitcher = () => {
-  const { i18n } = useTranslation()
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef(null)
+  const { i18n } = useTranslation();
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const languages = [
     { code: 'ru', name: 'Русский' },
     { code: 'en', name: 'English' },
-  ]
-  const currentLanguage =
-    languages.find((lang) => lang.code === i18n.language) ||
-    languages[0]
+  ];
+  const currentLanguage = languages.find((lang) => lang.code === i18n.language) || languages[0];
   // Компонент для отображения кода страны с CSS-флагом в кружке
-  const CountryDisplay = ({
-    language,
-    showName = false,
-  }) => {
+  const CountryDisplay = ({ language, showName = false }) => {
     const renderFlag = () => {
       if (language.code === 'ru') {
         // Российский флаг: белый, синий, красный
@@ -49,7 +44,7 @@ const LanguageSwitcher = () => {
               }}
             />
           </div>
-        )
+        );
       } else if (language.code === 'en') {
         // Британский флаг (упрощенный): синий фон с белым крестом
         return (
@@ -106,10 +101,10 @@ const LanguageSwitcher = () => {
               }}
             />
           </div>
-        )
+        );
       }
-      return null
-    }
+      return null;
+    };
     return (
       <div className="d-flex align-items-center">
         <span
@@ -135,53 +130,42 @@ const LanguageSwitcher = () => {
         >
           {renderFlag()}
         </span>
-        {showName && (
-          <span className="ms-2">{language.name}</span>
-        )}
+        {showName && <span className="ms-2">{language.name}</span>}
       </div>
-    )
-  }
+    );
+  };
   const handleLanguageChange = (langCode) => {
-    i18n.changeLanguage(langCode)
-    setIsOpen(false)
-    localStorage.setItem('language', langCode)
-  }
+    i18n.changeLanguage(langCode);
+    setIsOpen(false);
+    localStorage.setItem('language', langCode);
+  };
   const toggleDropdown = () => {
-    setIsOpen(!isOpen)
-  }
+    setIsOpen(!isOpen);
+  };
   // Закрытие при клике вне компонента
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target)
-      ) {
-        setIsOpen(false)
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
       }
-    }
-    document.addEventListener(
-      'mousedown',
-      handleClickOutside,
-    )
+    };
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener(
-        'mousedown',
-        handleClickOutside,
-      )
-    }
-  }, [])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
   // Закрытие при нажатии Escape
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
-    document.addEventListener('keydown', handleEscape)
+    };
+    document.addEventListener('keydown', handleEscape);
     return () => {
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [])
+      document.removeEventListener('keydown', handleEscape);
+    };
+  }, []);
   return (
     <div className="dropdown" ref={dropdownRef}>
       <button
@@ -201,9 +185,7 @@ const LanguageSwitcher = () => {
           viewBox="0 0 12 12"
           fill="currentColor"
           style={{
-            transform: isOpen
-              ? 'rotate(180deg)'
-              : 'rotate(0deg)',
+            transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 0.2s ease',
           }}
         >
@@ -223,28 +205,13 @@ const LanguageSwitcher = () => {
           {languages.map((language) => (
             <button
               key={language.code}
-              className={`dropdown-item d-flex align-items-center ${
-                language.code === i18n.language
-                  ? 'active'
-                  : ''
-              }`}
-              onClick={() =>
-                handleLanguageChange(language.code)
-              }
+              className={`dropdown-item d-flex align-items-center ${language.code === i18n.language ? 'active' : ''}`}
+              onClick={() => handleLanguageChange(language.code)}
               type="button"
             >
-              <CountryDisplay
-                language={language}
-                showName={true}
-              />
+              <CountryDisplay language={language} showName={true} />
               {language.code === i18n.language && (
-                <svg
-                  className="ms-auto"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                >
+                <svg className="ms-auto" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
                   <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z" />
                 </svg>
               )}
@@ -253,6 +220,6 @@ const LanguageSwitcher = () => {
         </div>
       )}
     </div>
-  )
-}
-export default LanguageSwitcher
+  );
+};
+export default LanguageSwitcher;

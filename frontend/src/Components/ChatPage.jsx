@@ -1,15 +1,9 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-  useMemo,
-} from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
-import { Formik, Form, Field, ErrorMessage } from 'formik'
-import { useTranslation } from 'react-i18next'
-import * as Yup from 'yup'
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { useTranslation } from 'react-i18next';
+import * as Yup from 'yup';
 import {
   fetchChatData,
   sendMessage,
@@ -17,63 +11,49 @@ import {
   createChannel,
   renameChannel,
   removeChannel,
-} from '../chatSlice'
-import LanguageSwitcher from './LanguageSwitcher'
+} from '../chatSlice';
+import LanguageSwitcher from './LanguageSwitcher';
 import {
   notifyChannelCreated,
   notifyChannelRenamed,
   notifyChannelRemoved,
   notifyNetworkError,
   notifyLoadingError,
-} from '../utils/notifications'
-import { filterProfanity } from '../utils/profanityFilter'
+} from '../utils/notifications';
+import { filterProfanity } from '../utils/profanityFilter';
 const ChatPage = () => {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const {
-    channels,
-    messages,
-    status,
-    sending,
-    currentChannelId,
-  } = useSelector((state) => state.chat)
-  const messagesEndRef = useRef(null)
-  const inputRef = useRef(null)
-  const [messageBody, setMessageBody] = useState('')
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { channels, messages, status, sending, currentChannelId } = useSelector((state) => state.chat);
+  const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
+  const [messageBody, setMessageBody] = useState('');
   const [modals, setModals] = useState({
     add: false,
     rename: false,
     remove: false,
-  })
-  const [dropdownOpenId, setDropdownOpenId] = useState(null)
+  });
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [renameData, setRenameData] = useState({
     id: null,
     name: '',
-  })
-  const [removeTargetId, setRemoveTargetId] = useState(null)
+  });
+  const [removeTargetId, setRemoveTargetId] = useState(null);
   const currentChannel = useMemo(
-    () =>
-      channels.find((c) => c.id === currentChannelId) ||
-      channels[0] ||
-      {},
+    () => channels.find((c) => c.id === currentChannelId) || channels[0] || {},
     [channels, currentChannelId],
-  )
+  );
   const channelMessages = useMemo(
-    () =>
-      messages.filter(
-        (m) =>
-          m.channelId ===
-          (currentChannelId || currentChannel?.id),
-      ),
+    () => messages.filter((m) => m.channelId === (currentChannelId || currentChannel?.id)),
     [messages, currentChannelId, currentChannel?.id],
-  )
+  );
   const getMessageCountText = useCallback(
     (count) => {
-      return t('chat.messageCount', { count })
+      return t('chat.messageCount', { count });
     },
     [t],
-  )
+  );
   const createChannelSchema = useMemo(
     () =>
       Yup.object({
@@ -81,25 +61,14 @@ const ChatPage = () => {
           .transform((v) => v?.trim())
           .min(3, t('chat.validation.length'))
           .max(20, t('chat.validation.length'))
-          .test(
-            'unique',
-            t('chat.validation.unique'),
-            (value) => {
-              const trimmed = value?.trim().toLowerCase()
-              return (
-                !trimmed ||
-                !channels.some(
-                  (c) =>
-                    c.name?.trim().toLowerCase() ===
-                    trimmed,
-                )
-              )
-            },
-          )
+          .test('unique', t('chat.validation.unique'), (value) => {
+            const trimmed = value?.trim().toLowerCase();
+            return !trimmed || !channels.some((c) => c.name?.trim().toLowerCase() === trimmed);
+          })
           .required(t('chat.validation.required')),
       }),
     [channels, t],
-  )
+  );
   const renameChannelSchema = useMemo(
     () =>
       Yup.object({
@@ -107,220 +76,181 @@ const ChatPage = () => {
           .transform((v) => v?.trim())
           .min(3, t('chat.validation.length'))
           .max(20, t('chat.validation.length'))
-          .test(
-            'unique',
-            t('chat.validation.unique'),
-            (value) => {
-              const trimmed = value?.trim().toLowerCase()
-              if (!trimmed) return true
-              // Проверяем, что имя отличается от текущего
-              const currentChannel = channels.find(
-                (c) => c.id === renameData.id,
-              )
-              const currentName = currentChannel?.name
-                ?.trim()
-                .toLowerCase()
-              if (trimmed === currentName) {
-                return false // То же имя - показываем ошибку
-              }
-              // Проверяем уникальность среди других каналов
-              return !channels.some(
-                (c) =>
-                  c.id !== renameData.id &&
-                  c.name?.trim().toLowerCase() === trimmed,
-              )
-            },
-          )
+          .test('unique', t('chat.validation.unique'), (value) => {
+            const trimmed = value?.trim().toLowerCase();
+            if (!trimmed) {return true;}
+            // Проверяем, что имя отличается от текущего
+            const currentChannel = channels.find((c) => c.id === renameData.id);
+            const currentName = currentChannel?.name?.trim().toLowerCase();
+            if (trimmed === currentName) {
+              return false; // То же имя - показываем ошибку
+            }
+            // Проверяем уникальность среди других каналов
+            return !channels.some((c) => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed);
+          })
           .required(t('chat.validation.required')),
       }),
     [channels, renameData.id, t],
-  )
+  );
   // Effects
   useEffect(() => {
     dispatch(fetchChatData())
       .unwrap()
       .catch(() => {
-        notifyLoadingError(t)
-      })
-  }, [dispatch, t])
+        notifyLoadingError(t);
+      });
+  }, [dispatch, t]);
   useEffect(() => {
-    if (channels.length > 0 && currentChannelId == null) {
-      dispatch(setCurrentChannelId(channels[0].id))
+    if (channels.length > 0 && currentChannelId === null) {
+      dispatch(setCurrentChannelId(channels[0].id));
     }
-  }, [channels, currentChannelId, dispatch])
+  }, [channels, currentChannelId, dispatch]);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'end',
-    })
-  }, [currentChannelId, messages.length])
+    });
+  }, [currentChannelId, messages.length]);
   useEffect(() => {
     if (sending !== 'loading') {
-      inputRef.current?.focus()
+      inputRef.current?.focus();
     }
-  }, [sending, currentChannelId])
+  }, [sending, currentChannelId]);
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('username')
-    navigate('/login', { replace: true })
-  }, [navigate])
+    localStorage.removeItem('token');
+    localStorage.removeItem('username');
+    navigate('/login', { replace: true });
+  }, [navigate]);
   const handleChannelClick = useCallback(
     (id) => {
-      dispatch(setCurrentChannelId(id))
+      dispatch(setCurrentChannelId(id));
     },
     [dispatch],
-  )
+  );
   const handleMessageSubmit = useCallback(
     async (e) => {
-      e.preventDefault()
-      const trimmed = messageBody.trim()
-      const channelId =
-        currentChannelId || currentChannel?.id
-      if (!trimmed || !channelId) return
-      const filteredMessage = filterProfanity(trimmed)
+      e.preventDefault();
+      const trimmed = messageBody.trim();
+      const channelId = currentChannelId || currentChannel?.id;
+      if (!trimmed || !channelId) {return;}
+      const filteredMessage = filterProfanity(trimmed);
       try {
-        await dispatch(
-          sendMessage({ body: filteredMessage, channelId }),
-        ).unwrap()
-        setMessageBody('')
+        await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap();
+        setMessageBody('');
       } catch {
         // Ошибка уже обработана в slice
       }
     },
-    [
-      messageBody,
-      currentChannelId,
-      currentChannel?.id,
-      dispatch,
-    ],
-  )
+    [messageBody, currentChannelId, currentChannel?.id, dispatch],
+  );
   const openModal = useCallback((type, data = {}) => {
-    setModals((prev) => ({ ...prev, [type]: true }))
-    setDropdownOpenId(null)
+    setModals((prev) => ({ ...prev, [type]: true }));
+    setDropdownOpenId(null);
     if (type === 'rename') {
-      setRenameData(data)
+      setRenameData(data);
     } else if (type === 'remove') {
-      setRemoveTargetId(data.id)
+      setRemoveTargetId(data.id);
     }
-  }, [])
+  }, []);
   const closeModal = useCallback((type) => {
-    setModals((prev) => ({ ...prev, [type]: false }))
+    setModals((prev) => ({ ...prev, [type]: false }));
     if (type === 'rename') {
-      setRenameData({ id: null, name: '' })
+      setRenameData({ id: null, name: '' });
     } else if (type === 'remove') {
-      setRemoveTargetId(null)
+      setRemoveTargetId(null);
     }
-  }, [])
+  }, []);
   const handleDropdownToggle = useCallback((id) => {
-    setDropdownOpenId((prev) => (prev === id ? null : id))
-  }, [])
+    setDropdownOpenId((prev) => (prev === id ? null : id));
+  }, []);
   const handleCreateChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
-      const name = values.name?.trim()
-      if (!name) return
-      const filteredName = filterProfanity(name)
+      const name = values.name?.trim();
+      if (!name) {return;}
+      const filteredName = filterProfanity(name);
       try {
-        await dispatch(
-          createChannel({ name: filteredName }),
-        ).unwrap()
-        resetForm()
-        closeModal('add')
-        notifyChannelCreated(t)
+        await dispatch(createChannel({ name: filteredName })).unwrap();
+        resetForm();
+        closeModal('add');
+        notifyChannelCreated(t);
       } catch (error) {
-        console.error('Failed to create channel:', error)
-        notifyNetworkError(t)
+        // eslint-disable-next-line no-console
+        console.error('Failed to create channel:', error);
+        notifyNetworkError(t);
       } finally {
-        setSubmitting(false)
+        setSubmitting(false);
       }
     },
     [dispatch, closeModal, t],
-  )
+  );
   const handleRenameChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
-      const name = values.name?.trim()
-      if (!name || !renameData.id) return
-      const filteredName = filterProfanity(name)
+      const name = values.name?.trim();
+      if (!name || !renameData.id) {return;}
+      const filteredName = filterProfanity(name);
       try {
         await dispatch(
           renameChannel({
             id: renameData.id,
             name: filteredName,
           }),
-        ).unwrap()
-        resetForm()
-        closeModal('rename')
-        notifyChannelRenamed(t)
+        ).unwrap();
+        resetForm();
+        closeModal('rename');
+        notifyChannelRenamed(t);
       } catch (error) {
-        console.error('Failed to rename channel:', error)
-        notifyNetworkError(t)
+        // eslint-disable-next-line no-console
+        console.error('Failed to rename channel:', error);
+        notifyNetworkError(t);
       } finally {
-        setSubmitting(false)
+        setSubmitting(false);
       }
     },
     [dispatch, renameData.id, closeModal, t],
-  )
+  );
   const handleRemoveChannel = useCallback(async () => {
-    if (!removeTargetId) return
+    if (!removeTargetId) {return;}
     try {
-      await dispatch(
-        removeChannel({ id: removeTargetId }),
-      ).unwrap()
-      closeModal('remove')
-      notifyChannelRemoved(t)
+      await dispatch(removeChannel({ id: removeTargetId })).unwrap();
+      closeModal('remove');
+      notifyChannelRemoved(t);
     } catch (error) {
-      console.error('Failed to remove channel:', error)
-      notifyNetworkError(t)
+      // eslint-disable-next-line no-console
+      console.error('Failed to remove channel:', error);
+      notifyNetworkError(t);
     }
-  }, [dispatch, removeTargetId, closeModal, t])
+  }, [dispatch, removeTargetId, closeModal, t]);
   // Render helpers
   const renderModal = (type, title, children) => {
-    if (!modals[type]) return null
+    if (!modals[type]) {return null;}
     return (
       <>
-        <div
-          className="fade modal-backdrop show"
-          onClick={() => closeModal(type)}
-        />
+        <div className="fade modal-backdrop show" onClick={() => closeModal(type)} />
         <div
           className="fade modal show"
           tabIndex="-1"
           role="dialog"
           aria-modal="true"
           style={{ display: 'block' }}
-          onMouseDown={(e) =>
-            e.target === e.currentTarget && closeModal(type)
-          }
+          onMouseDown={(e) => e.target === e.currentTarget && closeModal(type)}
         >
-          <div
-            className="modal-dialog modal-dialog-centered"
-            role="document"
-          >
+          <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <div className="modal-title h4">
-                  {title}
-                </div>
-                <button
-                  type="button"
-                  aria-label="Close"
-                  className="btn btn-close"
-                  onClick={() => closeModal(type)}
-                />
+                <div className="modal-title h4">{title}</div>
+                <button type="button" aria-label="Close" className="btn btn-close" onClick={() => closeModal(type)} />
               </div>
               <div className="modal-body">{children}</div>
             </div>
           </div>
         </div>
       </>
-    )
-  }
+    );
+  };
   const renderChannelItem = (channel) => {
-    const isActive =
-      channel.id ===
-      (currentChannelId || currentChannel?.id)
-    const isRemovable =
-      channel.removable !== false && channel.id > 2
-    const showDropdown = dropdownOpenId === channel.id
+    const isActive = channel.id === (currentChannelId || currentChannel?.id);
+    const isRemovable = channel.removable !== false && channel.id > 2;
+    const showDropdown = dropdownOpenId === channel.id;
     return (
       <li className="nav-item w-100" key={channel.id}>
         <div className="d-flex dropdown btn-group">
@@ -329,10 +259,7 @@ const ChatPage = () => {
             className={`w-100 rounded-0 text-start text-truncate btn${isActive ? ' btn-secondary' : ' btn-light'}`}
             onClick={() => handleChannelClick(channel.id)}
           >
-            <span
-              className="me-1"
-              style={{ color: isActive ? '#fff' : '#000' }}
-            >
+            <span className="me-1" style={{ color: isActive ? '#fff' : '#000' }}>
               #
             </span>
             {channel.name}
@@ -342,14 +269,10 @@ const ChatPage = () => {
               <button
                 type="button"
                 className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn${isActive ? ' btn-secondary show' : ''}`}
-                onClick={() =>
-                  handleDropdownToggle(channel.id)
-                }
+                onClick={() => handleDropdownToggle(channel.id)}
                 aria-expanded={showDropdown}
               >
-                <span className="visually-hidden">
-                  {t('chat.channelManagement')}
-                </span>
+                <span className="visually-hidden">{t('chat.channelManagement')}</span>
               </button>
               {showDropdown && (
                 <div
@@ -389,8 +312,8 @@ const ChatPage = () => {
           )}
         </div>
       </li>
-    )
-  }
+    );
+  };
   return (
     <div className="h-100 bg-light">
       <div className="h-100 d-flex flex-column">
@@ -402,11 +325,7 @@ const ChatPage = () => {
             </Link>
             <div className="d-flex align-items-center gap-2">
               <LanguageSwitcher />
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={handleLogout}
-              >
+              <button type="button" className="btn btn-primary" onClick={handleLogout}>
                 {t('logout')}
               </button>
             </div>
@@ -436,9 +355,7 @@ const ChatPage = () => {
                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                   </svg>
-                  <span className="visually-hidden">
-                    {t('chat.addChannelButton')}
-                  </span>
+                  <span className="visually-hidden">{t('chat.addChannelButton')}</span>
                 </button>
               </div>
               <ul className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
@@ -453,21 +370,12 @@ const ChatPage = () => {
                   <p className="m-0">
                     <b>#{currentChannel?.name || ''}</b>
                   </p>
-                  <span className="text-muted">
-                    {getMessageCountText(
-                      channelMessages.length,
-                    )}
-                  </span>
+                  <span className="text-muted">{getMessageCountText(channelMessages.length)}</span>
                 </div>
                 {/* Messages */}
                 <div className="chat-messages overflow-auto px-5">
                   {channelMessages.map((msg, idx) => (
-                    <div
-                      className="text-break mb-2"
-                      key={
-                        msg.id ?? `${msg.channelId}-${idx}`
-                      }
-                    >
+                    <div className="text-break mb-2" key={msg.id ?? `${msg.channelId}-${idx}`}>
                       <b>{msg.username}:</b> {msg.body}
                     </div>
                   ))}
@@ -475,37 +383,23 @@ const ChatPage = () => {
                 </div>
                 {/* Message input */}
                 <div className="mt-auto px-5 py-3">
-                  <form
-                    noValidate
-                    autoComplete="off"
-                    className="py-1 border rounded-2"
-                    onSubmit={handleMessageSubmit}
-                  >
+                  <form noValidate autoComplete="off" className="py-1 border rounded-2" onSubmit={handleMessageSubmit}>
                     <div className="input-group has-validation">
                       <input
                         ref={inputRef}
                         name="body"
                         aria-label={t('chat.newMessage')}
-                        placeholder={
-                          status === 'loading'
-                            ? t('loading')
-                            : t('chat.enterMessage')
-                        }
+                        placeholder={status === 'loading' ? t('loading') : t('chat.enterMessage')}
                         className="border-0 p-0 ps-2 form-control"
                         value={messageBody}
-                        onChange={(e) =>
-                          setMessageBody(e.target.value)
-                        }
+                        onChange={(e) => setMessageBody(e.target.value)}
                         autoComplete="off"
                         disabled={sending === 'loading'}
                         autoFocus
                       />
                       <button
                         type="submit"
-                        disabled={
-                          !messageBody.trim() ||
-                          sending === 'loading'
-                        }
+                        disabled={!messageBody.trim() || sending === 'loading'}
                         className="btn btn-group-vertical"
                       >
                         <svg
@@ -520,9 +414,7 @@ const ChatPage = () => {
                             d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
                           />
                         </svg>
-                        <span className="visually-hidden">
-                          {t('chat.send')}
-                        </span>
+                        <span className="visually-hidden">{t('chat.send')}</span>
                       </button>
                     </div>
                   </form>
@@ -544,10 +436,7 @@ const ChatPage = () => {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form>
-                <label
-                  htmlFor="name"
-                  className="visually-hidden"
-                >
+                <label htmlFor="name" className="visually-hidden">
                   {t('chat.modals.addChannel.channelName')}
                 </label>
                 <Field
@@ -556,11 +445,7 @@ const ChatPage = () => {
                   className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
                   autoFocus
                 />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="invalid-feedback"
-                />
+                <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button
                     type="button"
@@ -570,11 +455,7 @@ const ChatPage = () => {
                   >
                     {t('cancel')}
                   </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
+                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
                     {t('submit')}
                   </button>
                 </div>
@@ -595,13 +476,8 @@ const ChatPage = () => {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form>
-                <label
-                  htmlFor="name"
-                  className="visually-hidden"
-                >
-                  {t(
-                    'chat.modals.renameChannel.channelName',
-                  )}
+                <label htmlFor="name" className="visually-hidden">
+                  {t('chat.modals.renameChannel.channelName')}
                 </label>
                 <Field
                   name="name"
@@ -610,11 +486,7 @@ const ChatPage = () => {
                   autoFocus
                   onFocus={(e) => e.target.select()}
                 />
-                <ErrorMessage
-                  name="name"
-                  component="div"
-                  className="invalid-feedback"
-                />
+                <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button
                     type="button"
@@ -624,11 +496,7 @@ const ChatPage = () => {
                   >
                     {t('cancel')}
                   </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={isSubmitting}
-                  >
+                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
                     {t('submit')}
                   </button>
                 </div>
@@ -642,18 +510,10 @@ const ChatPage = () => {
           <>
             <p>{t('chat.modals.removeChannel.confirm')}</p>
             <div className="d-flex justify-content-end">
-              <button
-                type="button"
-                className="me-2 btn btn-secondary"
-                onClick={() => closeModal('remove')}
-              >
+              <button type="button" className="me-2 btn btn-secondary" onClick={() => closeModal('remove')}>
                 {t('cancel')}
               </button>
-              <button
-                type="button"
-                className="btn btn-danger"
-                onClick={handleRemoveChannel}
-              >
+              <button type="button" className="btn btn-danger" onClick={handleRemoveChannel}>
                 {t('chat.modals.removeChannel.delete')}
               </button>
             </div>
@@ -661,6 +521,6 @@ const ChatPage = () => {
         )}
       </div>
     </div>
-  )
-}
-export default ChatPage
+  );
+};
+export default ChatPage;

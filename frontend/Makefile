@@ -11,7 +11,7 @@ dev:
 	npm run dev
 		
 lint:
-	npx eslint --ext js,jsx .
+	npx eslint .
 
 fix:
 	npx eslint . --fix
