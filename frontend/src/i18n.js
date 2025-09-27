@@ -48,7 +48,7 @@ const resources = {
           usernameLength: 'От 3 до 20 символов',
           passwordMin: 'Не менее 6 символов',
           passwordMatch: 'Пароли должны совпадать',
-          userExists: 'Пользователь уже существует',
+          userExists: 'Такой пользователь уже существует',
           serverError: 'Ошибка сервера. Попробуйте позже',
           signupFailed: 'Не удалось зарегистрироваться'
         }
