@@ -22,14 +22,14 @@ const extractUsername = (obj) => {
     return DEFAULT_USERNAME
   }
   return (
-    obj.username ||
-    obj.nickname ||
-    obj.name ||
-    obj.user?.username ||
-    obj.user?.name ||
-    obj.author?.username ||
-    obj.sender?.username ||
-    DEFAULT_USERNAME
+    obj.username
+    || obj.nickname
+    || obj.name
+    || obj.user?.username
+    || obj.user?.name
+    || obj.author?.username
+    || obj.sender?.username
+    || DEFAULT_USERNAME
   )
 }
 const normalizeMessage = (payload) => {
@@ -331,6 +331,6 @@ const chatSlice = createSlice({
       })
   },
 })
-export const { messageReceived, setCurrentChannelId, channelReceived, channelRenamed, channelRemoved } =
-  chatSlice.actions
+export const { messageReceived, setCurrentChannelId, channelReceived, channelRenamed, channelRemoved }
+  = chatSlice.actions
 export default chatSlice.reducer
