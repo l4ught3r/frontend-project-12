@@ -65,7 +65,7 @@ const authStorage = {
 }
 
 const createAuthHeaders = token => ({
-  Authorization: `Bearer ${token}`,
+  'Authorization': `Bearer ${token}`,
   'Content-Type': 'application/json',
 })
 

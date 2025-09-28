@@ -68,6 +68,7 @@ export default [
       '@stylistic/quotes': ['error', 'single'],
       '@stylistic/no-trailing-spaces': 'error',
       '@stylistic/operator-linebreak': ['error', 'before'],
+      '@stylistic/quote-props': ['error', 'consistent'],
       'no-var': 'error',
       'prefer-arrow-callback': 'error',
     },
