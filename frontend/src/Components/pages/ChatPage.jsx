@@ -11,56 +11,73 @@ import {
   createChannel,
   renameChannel,
   removeChannel,
-} from '../chatSlice'
-import LanguageSwitcher from './LanguageSwitcher'
+} from '../../store/chatSlice'
+import LanguageSwitcher from '../ui/LanguageSwitcher'
 import {
   notifyChannelCreated,
   notifyChannelRenamed,
   notifyChannelRemoved,
   notifyNetworkError,
   notifyLoadingError,
-} from '../utils/notifications'
-import { filterProfanity } from '../utils/profanityFilter'
+} from '../../utils/notifications'
+import { filterProfanity } from '../../utils/profanityFilter'
+
+const STORAGE_KEYS = {
+  TOKEN: 'token',
+  USERNAME: 'username',
+}
+
+const MODAL_TYPES = {
+  ADD: 'add',
+  RENAME: 'rename',
+  REMOVE: 'remove',
+}
+
+const VALIDATION_RULES = {
+  MIN_LENGTH: 3,
+  MAX_LENGTH: 20,
+}
+
+const REMOVABLE_CHANNEL_THRESHOLD = 2
+
 const ChatPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { channels, messages, status, sending, currentChannelId } = useSelector(state => state.chat)
+
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
+
   const [messageBody, setMessageBody] = useState('')
   const [modals, setModals] = useState({
-    add: false,
-    rename: false,
-    remove: false,
+    [MODAL_TYPES.ADD]: false,
+    [MODAL_TYPES.RENAME]: false,
+    [MODAL_TYPES.REMOVE]: false,
   })
   const [dropdownOpenId, setDropdownOpenId] = useState(null)
-  const [renameData, setRenameData] = useState({
-    id: null,
-    name: '',
-  })
+  const [renameData, setRenameData] = useState({ id: null, name: '' })
   const [removeTargetId, setRemoveTargetId] = useState(null)
+
   const currentChannel = useMemo(
     () => channels.find(c => c.id === currentChannelId) || channels[0] || {},
     [channels, currentChannelId],
   )
+
   const channelMessages = useMemo(
     () => messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)),
     [messages, currentChannelId, currentChannel?.id],
   )
-  const getMessageCountText = useCallback(
-    (count) => {
-      return t('chat.messageCount', { count })
-    },
-    [t],
-  )
+
+  const getMessageCountText = useCallback(count => t('chat.messageCount', { count }), [t])
+
   const createChannelSchema = useMemo(
     () =>
       Yup.object({
         name: Yup.string()
           .transform(v => v?.trim())
-          .min(3, t('chat.validation.length'))
-          .max(20, t('chat.validation.length'))
+          .min(VALIDATION_RULES.MIN_LENGTH, t('chat.validation.length'))
+          .max(VALIDATION_RULES.MAX_LENGTH, t('chat.validation.length'))
           .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase()
             return !trimmed || !channels.some(c => c.name?.trim().toLowerCase() === trimmed)
@@ -69,73 +86,97 @@ const ChatPage = () => {
       }),
     [channels, t],
   )
+
   const renameChannelSchema = useMemo(
     () =>
       Yup.object({
         name: Yup.string()
           .transform(v => v?.trim())
-          .min(3, t('chat.validation.length'))
-          .max(20, t('chat.validation.length'))
+          .min(VALIDATION_RULES.MIN_LENGTH, t('chat.validation.length'))
+          .max(VALIDATION_RULES.MAX_LENGTH, t('chat.validation.length'))
           .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase()
-            if (!trimmed) {
-              return true
-            }
+            if (!trimmed) return true
+
             const currentChannel = channels.find(c => c.id === renameData.id)
             const currentName = currentChannel?.name?.trim().toLowerCase()
-            if (trimmed === currentName) {
-              return false
-            }
+            if (trimmed === currentName) return false
+
             return !channels.some(c => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed)
           })
           .required(t('chat.validation.required')),
       }),
     [channels, renameData.id, t],
   )
-  // Effects
+
   useEffect(() => {
     dispatch(fetchChatData())
       .unwrap()
-      .catch(() => {
-        notifyLoadingError(t)
-      })
+      .catch(() => notifyLoadingError(t))
   }, [dispatch, t])
+
   useEffect(() => {
     if (channels.length > 0 && currentChannelId === null) {
       dispatch(setCurrentChannelId(channels[0].id))
     }
   }, [channels, currentChannelId, dispatch])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({
       behavior: 'smooth',
       block: 'end',
     })
   }, [currentChannelId, messages.length])
+
   useEffect(() => {
     if (sending !== 'loading') {
       inputRef.current?.focus()
     }
   }, [sending, currentChannelId])
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownOpenId && !event.target.closest('.dropdown')) {
+        setDropdownOpenId(null)
+      }
+    }
+
+    document.addEventListener('click', handleClickOutside)
+    return () => document.removeEventListener('click', handleClickOutside)
+  }, [dropdownOpenId])
+
+  const clearAuthData = useCallback(() => {
+    localStorage.removeItem(STORAGE_KEYS.TOKEN)
+    localStorage.removeItem(STORAGE_KEYS.USERNAME)
+  }, [])
+
   const handleLogout = useCallback(() => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('username')
+    clearAuthData()
     navigate('/login', { replace: true })
-  }, [navigate])
+  }, [navigate, clearAuthData])
+
   const handleChannelClick = useCallback(
     (id) => {
       dispatch(setCurrentChannelId(id))
+      setDropdownOpenId(null)
     },
     [dispatch],
   )
+
+  const handleDropdownToggle = useCallback((id) => {
+    setDropdownOpenId(prev => (prev === id ? null : id))
+  }, [])
+
   const handleMessageSubmit = useCallback(
     async (e) => {
       e.preventDefault()
       const trimmed = messageBody.trim()
       const channelId = currentChannelId || currentChannel?.id
-      if (!trimmed || !channelId) {
-        return
-      }
+
+      if (!trimmed || !channelId) return
+
       const filteredMessage = filterProfanity(trimmed)
+
       try {
         await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap()
         setMessageBody('')
@@ -146,39 +187,41 @@ const ChatPage = () => {
     },
     [messageBody, currentChannelId, currentChannel?.id, dispatch, t],
   )
+
   const openModal = useCallback((type, data = {}) => {
     setModals(prev => ({ ...prev, [type]: true }))
     setDropdownOpenId(null)
-    if (type === 'rename') {
+
+    if (type === MODAL_TYPES.RENAME) {
       setRenameData(data)
     }
-    else if (type === 'remove') {
+    else if (type === MODAL_TYPES.REMOVE) {
       setRemoveTargetId(data.id)
     }
   }, [])
+
   const closeModal = useCallback((type) => {
     setModals(prev => ({ ...prev, [type]: false }))
-    if (type === 'rename') {
+
+    if (type === MODAL_TYPES.RENAME) {
       setRenameData({ id: null, name: '' })
     }
-    else if (type === 'remove') {
+    else if (type === MODAL_TYPES.REMOVE) {
       setRemoveTargetId(null)
     }
   }, [])
-  const handleDropdownToggle = useCallback((id) => {
-    setDropdownOpenId(prev => (prev === id ? null : id))
-  }, [])
+
   const handleCreateChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
       const name = values.name?.trim()
-      if (!name) {
-        return
-      }
+      if (!name) return
+
       const filteredName = filterProfanity(name)
+
       try {
         await dispatch(createChannel({ name: filteredName })).unwrap()
         resetForm()
-        closeModal('add')
+        closeModal(MODAL_TYPES.ADD)
         notifyChannelCreated(t)
       }
       catch {
@@ -190,22 +233,18 @@ const ChatPage = () => {
     },
     [dispatch, closeModal, t],
   )
+
   const handleRenameChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
       const name = values.name?.trim()
-      if (!name || !renameData.id) {
-        return
-      }
+      if (!name || !renameData.id) return
+
       const filteredName = filterProfanity(name)
+
       try {
-        await dispatch(
-          renameChannel({
-            id: renameData.id,
-            name: filteredName,
-          }),
-        ).unwrap()
+        await dispatch(renameChannel({ id: renameData.id, name: filteredName })).unwrap()
         resetForm()
-        closeModal('rename')
+        closeModal(MODAL_TYPES.RENAME)
         notifyChannelRenamed(t)
       }
       catch {
@@ -217,116 +256,164 @@ const ChatPage = () => {
     },
     [dispatch, renameData.id, closeModal, t],
   )
+
   const handleRemoveChannel = useCallback(async () => {
-    if (!removeTargetId) {
-      return
-    }
+    if (!removeTargetId) return
+
     try {
       await dispatch(removeChannel({ id: removeTargetId })).unwrap()
-      closeModal('remove')
+      closeModal(MODAL_TYPES.REMOVE)
       notifyChannelRemoved(t)
     }
     catch {
       notifyNetworkError(t)
     }
   }, [dispatch, removeTargetId, closeModal, t])
-  const renderModal = (type, title, children) => {
-    if (!modals[type]) {
-      return null
-    }
-    return (
-      <>
-        <div className="fade modal-backdrop show" onClick={() => closeModal(type)} />
-        <div
-          className="fade modal show"
-          tabIndex="-1"
-          role="dialog"
-          aria-modal="true"
-          style={{ display: 'block' }}
-          onMouseDown={e => e.target === e.currentTarget && closeModal(type)}
-        >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <div className="modal-title h4">{title}</div>
-                <button type="button" aria-label="Close" className="btn btn-close" onClick={() => closeModal(type)} />
+
+  const renderModal = useCallback(
+    (type, title, children) => {
+      if (!modals[type]) return null
+
+      return (
+        <>
+          <div className="fade modal-backdrop show" onClick={() => closeModal(type)} />
+          <div
+            className="fade modal show"
+            tabIndex="-1"
+            role="dialog"
+            aria-modal="true"
+            style={{ display: 'block' }}
+            onMouseDown={e => e.target === e.currentTarget && closeModal(type)}
+          >
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <div className="modal-title h4">{title}</div>
+                  <button type="button" aria-label="Close" className="btn btn-close" onClick={() => closeModal(type)} />
+                </div>
+                <div className="modal-body">{children}</div>
               </div>
-              <div className="modal-body">{children}</div>
             </div>
           </div>
-        </div>
-      </>
-    )
-  }
-  const renderChannelItem = (channel) => {
-    const isActive = channel.id === (currentChannelId || currentChannel?.id)
-    const isRemovable = channel.removable !== false && channel.id > 2
-    const showDropdown = dropdownOpenId === channel.id
-    return (
-      <li className="nav-item w-100" key={channel.id}>
-        <div className="d-flex dropdown btn-group">
-          <button
-            type="button"
-            className={`w-100 rounded-0 text-start text-truncate btn${isActive ? ' btn-secondary' : ' btn-light'}`}
-            onClick={() => handleChannelClick(channel.id)}
-          >
-            <span className="me-1" style={{ color: isActive ? '#fff' : '#000' }}>
-              #
-            </span>
-            {channel.name}
-          </button>
-          {isRemovable && (
-            <>
-              <button
-                type="button"
-                className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn${isActive ? ' btn-secondary show' : ''}`}
-                onClick={() => handleDropdownToggle(channel.id)}
-                aria-expanded={showDropdown}
-              >
-                <span className="visually-hidden">{t('chat.channelManagement')}</span>
-              </button>
-              {showDropdown && (
-                <div
-                  className="dropdown-menu show"
-                  style={{
-                    position: 'absolute',
-                    inset: '0px auto auto 0px',
-                    transform: 'translate(-8px, 40px)',
-                  }}
+        </>
+      )
+    },
+    [modals, closeModal],
+  )
+
+  const renderChannelItem = useCallback(
+    (channel) => {
+      const isActive = channel.id === (currentChannelId || currentChannel?.id)
+      const isRemovable = channel.removable !== false && channel.id > REMOVABLE_CHANNEL_THRESHOLD
+      const showDropdown = dropdownOpenId === channel.id
+
+      return (
+        <li className="nav-item w-100" key={channel.id}>
+          <div className="d-flex dropdown btn-group">
+            <button
+              type="button"
+              className={`w-100 rounded-0 text-start text-truncate btn${isActive ? ' btn-secondary' : ' btn-light'}`}
+              onClick={() => handleChannelClick(channel.id)}
+            >
+              <span className="me-1" style={{ color: isActive ? '#fff' : '#000' }}>
+                #
+              </span>
+              {channel.name}
+            </button>
+            {isRemovable && (
+              <>
+                <button
+                  type="button"
+                  className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn${isActive ? ' btn-secondary show' : ''}`}
+                  onClick={() => handleDropdownToggle(channel.id)}
+                  aria-expanded={showDropdown}
                 >
-                  <button
-                    className="dropdown-item"
-                    type="button"
-                    onClick={() =>
-                      openModal('remove', {
-                        id: channel.id,
-                      })}
+                  <span className="visually-hidden">{t('chat.channelManagement')}</span>
+                </button>
+                {showDropdown && (
+                  <div
+                    className="dropdown-menu show"
+                    style={{
+                      position: 'absolute',
+                      inset: '0px auto auto 0px',
+                      transform: 'translate(-8px, 40px)',
+                    }}
                   >
-                    {t('chat.actions.delete')}
-                  </button>
-                  <button
-                    className="dropdown-item"
-                    type="button"
-                    onClick={() =>
-                      openModal('rename', {
-                        id: channel.id,
-                        name: channel.name,
-                      })}
-                  >
-                    {t('chat.actions.rename')}
-                  </button>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      </li>
-    )
-  }
+                    <button
+                      className="dropdown-item"
+                      type="button"
+                      onClick={() => openModal(MODAL_TYPES.REMOVE, { id: channel.id })}
+                    >
+                      {t('chat.actions.delete')}
+                    </button>
+                    <button
+                      className="dropdown-item"
+                      type="button"
+                      onClick={() => openModal(MODAL_TYPES.RENAME, { id: channel.id, name: channel.name })}
+                    >
+                      {t('chat.actions.rename')}
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </li>
+      )
+    },
+    [currentChannelId, currentChannel?.id, dropdownOpenId, handleChannelClick, handleDropdownToggle, openModal, t],
+  )
+
+  const renderMessageItem = useCallback(
+    (msg, idx) => (
+      <div className="text-break mb-2" key={msg.id ?? `${msg.channelId}-${idx}`}>
+        <b>
+          {msg.username}
+          :
+        </b>
+        {' '}
+        {msg.body}
+      </div>
+    ),
+    [],
+  )
+
+  const renderFormField = useCallback(
+    ({ errors, touched, autoFocus = false, selectOnFocus = false, labelText }) => (
+      <>
+        <label htmlFor="name" className="visually-hidden">
+          {labelText}
+        </label>
+        <Field
+          name="name"
+          id="name"
+          className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
+          autoFocus={autoFocus}
+          onFocus={selectOnFocus ? e => e.target.select() : undefined}
+        />
+        <ErrorMessage name="name" component="div" className="invalid-feedback" />
+      </>
+    ),
+    [],
+  )
+
+  const renderFormButtons = useCallback(
+    ({ isSubmitting, onCancel }) => (
+      <div className="d-flex justify-content-end">
+        <button type="button" className="me-2 btn btn-secondary" onClick={onCancel} disabled={isSubmitting}>
+          {t('cancel')}
+        </button>
+        <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+          {t('submit')}
+        </button>
+      </div>
+    ),
+    [t],
+  )
+
   return (
     <div className="h-100 bg-light">
       <div className="h-100 d-flex flex-column">
-        {/* Header */}
         <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
           <div className="container">
             <Link className="navbar-brand" to="/">
@@ -340,17 +427,16 @@ const ChatPage = () => {
             </div>
           </div>
         </nav>
-        {/* Main content */}
+
         <div className="container h-100 my-4 overflow-hidden rounded shadow">
           <div className="row h-100 bg-white flex-md-row">
-            {/* Channels sidebar */}
             <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
               <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
                 <b>{t('chat.channels')}</b>
                 <button
                   type="button"
                   className="p-0 text-primary btn btn-group-vertical"
-                  onClick={() => openModal('add')}
+                  onClick={() => openModal(MODAL_TYPES.ADD)}
                   aria-label={t('chat.addChannel')}
                 >
                   <svg
@@ -371,10 +457,9 @@ const ChatPage = () => {
                 {channels.map(renderChannelItem)}
               </ul>
             </div>
-            {/* Chat area */}
+
             <div className="col p-0 h-100">
               <div className="d-flex flex-column h-100">
-                {/* Channel header */}
                 <div className="bg-light mb-4 p-3 shadow-sm small">
                   <p className="m-0">
                     <b>
@@ -384,21 +469,12 @@ const ChatPage = () => {
                   </p>
                   <span className="text-muted">{getMessageCountText(channelMessages.length)}</span>
                 </div>
-                {/* Messages */}
+
                 <div className="chat-messages overflow-auto px-5">
-                  {channelMessages.map((msg, idx) => (
-                    <div className="text-break mb-2" key={msg.id ?? `${msg.channelId}-${idx}`}>
-                      <b>
-                        {msg.username}
-                        :
-                      </b>
-                      {' '}
-                      {msg.body}
-                    </div>
-                  ))}
+                  {channelMessages.map(renderMessageItem)}
                   <div ref={messagesEndRef} />
                 </div>
-                {/* Message input */}
+
                 <div className="mt-auto px-5 py-3">
                   <form noValidate autoComplete="off" className="py-1 border rounded-2" onSubmit={handleMessageSubmit}>
                     <div className="input-group has-validation">
@@ -440,9 +516,9 @@ const ChatPage = () => {
             </div>
           </div>
         </div>
-        {/* Modals */}
+
         {renderModal(
-          'add',
+          MODAL_TYPES.ADD,
           t('chat.modals.addChannel.title'),
           <Formik
             initialValues={{ name: '' }}
@@ -453,35 +529,23 @@ const ChatPage = () => {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form>
-                <label htmlFor="name" className="visually-hidden">
-                  {t('chat.modals.addChannel.channelName')}
-                </label>
-                <Field
-                  name="name"
-                  id="name"
-                  className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
-                  autoFocus
-                />
-                <ErrorMessage name="name" component="div" className="invalid-feedback" />
-                <div className="d-flex justify-content-end">
-                  <button
-                    type="button"
-                    className="me-2 btn btn-secondary"
-                    onClick={() => closeModal('add')}
-                    disabled={isSubmitting}
-                  >
-                    {t('cancel')}
-                  </button>
-                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                    {t('submit')}
-                  </button>
-                </div>
+                {renderFormField({
+                  errors,
+                  touched,
+                  autoFocus: true,
+                  labelText: t('chat.modals.addChannel.channelName'),
+                })}
+                {renderFormButtons({
+                  isSubmitting,
+                  onCancel: () => closeModal(MODAL_TYPES.ADD),
+                })}
               </Form>
             )}
           </Formik>,
         )}
+
         {renderModal(
-          'rename',
+          MODAL_TYPES.RENAME,
           t('chat.modals.renameChannel.title'),
           <Formik
             initialValues={{ name: renameData.name || '' }}
@@ -493,41 +557,29 @@ const ChatPage = () => {
           >
             {({ isSubmitting, errors, touched }) => (
               <Form>
-                <label htmlFor="name" className="visually-hidden">
-                  {t('chat.modals.renameChannel.channelName')}
-                </label>
-                <Field
-                  name="name"
-                  id="name"
-                  className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
-                  autoFocus
-                  onFocus={e => e.target.select()}
-                />
-                <ErrorMessage name="name" component="div" className="invalid-feedback" />
-                <div className="d-flex justify-content-end">
-                  <button
-                    type="button"
-                    className="me-2 btn btn-secondary"
-                    onClick={() => closeModal('rename')}
-                    disabled={isSubmitting}
-                  >
-                    {t('cancel')}
-                  </button>
-                  <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                    {t('submit')}
-                  </button>
-                </div>
+                {renderFormField({
+                  errors,
+                  touched,
+                  autoFocus: true,
+                  selectOnFocus: true,
+                  labelText: t('chat.modals.renameChannel.channelName'),
+                })}
+                {renderFormButtons({
+                  isSubmitting,
+                  onCancel: () => closeModal(MODAL_TYPES.RENAME),
+                })}
               </Form>
             )}
           </Formik>,
         )}
+
         {renderModal(
-          'remove',
+          MODAL_TYPES.REMOVE,
           t('chat.modals.removeChannel.title'),
           <>
             <p>{t('chat.modals.removeChannel.confirm')}</p>
             <div className="d-flex justify-content-end">
-              <button type="button" className="me-2 btn btn-secondary" onClick={() => closeModal('remove')}>
+              <button type="button" className="me-2 btn btn-secondary" onClick={() => closeModal(MODAL_TYPES.REMOVE)}>
                 {t('cancel')}
               </button>
               <button type="button" className="btn btn-danger" onClick={handleRemoveChannel}>
@@ -540,4 +592,5 @@ const ChatPage = () => {
     </div>
   )
 }
+
 export default ChatPage

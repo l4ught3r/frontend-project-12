@@ -5,12 +5,10 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import stylistic from '@stylistic/eslint-plugin'
 
 export default [
-  // Глобальные игнорируемые файлы
   {
     ignores: ['dist/**', 'build/**', 'node_modules/**'],
   },
 
-  // Базовая конфигурация для всех JS/JSX файлов
   {
     files: ['**/*.{js,jsx,mjs,cjs}'],
     plugins: {
@@ -42,11 +40,8 @@ export default [
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
 
-      // React специфичные правила
-      'react/react-in-jsx-scope': 'off', // Не нужно в React 17+
-      'react/prop-types': 'off', // Отключаем проверку PropTypes
-
-      // Основные правила качества кода
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
       'no-unused-vars': [
         'error',
         {
@@ -62,20 +57,17 @@ export default [
       'prefer-template': 'error',
       'prefer-object-spread': 'error',
 
-      // Стилистические правила
       'brace-style': ['error', 'stroustrup'],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],
       '@stylistic/indent': ['error', 2],
       '@stylistic/arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
-      '@stylistic/jsx-curly-newline': ['error', { multiline: 'consistent', singleline: 'consistent' }], // Контролирует переносы в JSX выражениях
-      '@stylistic/jsx-one-expression-per-line': ['error', { allow: 'single-child' }], // Требует размещения JSX выражений на отдельных строках
-      '@stylistic/quotes': ['error', 'single'], // Требует использования одинарных кавычек
-      '@stylistic/no-trailing-spaces': 'error', // Запрещает пробелы в конце строк
-      '@stylistic/operator-linebreak': ['error', 'before'], // Требует размещения операторов в начале строки
-
-      // Правила для лучших практик
+      '@stylistic/jsx-curly-newline': ['error', { multiline: 'consistent', singleline: 'consistent' }],
+      '@stylistic/jsx-one-expression-per-line': ['error', { allow: 'single-child' }],
+      '@stylistic/quotes': ['error', 'single'],
+      '@stylistic/no-trailing-spaces': 'error',
+      '@stylistic/operator-linebreak': ['error', 'before'],
       'no-var': 'error',
       'prefer-arrow-callback': 'error',
     },

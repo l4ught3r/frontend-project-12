@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
 import './index.css'
-import './i18n'
-import App from './Components/App.jsx'
-import store from './store'
-import socket from './socket'
-import { messageReceived, channelReceived, channelRenamed, channelRemoved } from './chatSlice'
+import './locales/i18n'
+import App from './Components/layout/App'
+import store from './store/store'
+import socket from './services/socket'
+import { messageReceived, channelReceived, channelRenamed, channelRemoved } from './store/chatSlice'
 if (import.meta.env.DEV) {
   const key = 'devAuthClearedOnce'
   if (!sessionStorage.getItem(key)) {
