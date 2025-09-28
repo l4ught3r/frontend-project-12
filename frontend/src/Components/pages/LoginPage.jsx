@@ -32,11 +32,6 @@ const LoginPage = () => {
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
-  const clearChatData = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEYS.CHAT_MESSAGES)
-    localStorage.removeItem(STORAGE_KEYS.CHAT_CHANNELS)
-  }, [])
-
   const saveUserData = useCallback((token, username) => {
     localStorage.setItem(STORAGE_KEYS.TOKEN, token)
     localStorage.setItem(STORAGE_KEYS.USERNAME, username)
@@ -64,17 +59,14 @@ const LoginPage = () => {
         const finalUsername = username || values.username
 
         saveUserData(token, finalUsername)
-        clearChatData()
         redirectToHome()
-      }
-      catch {
+      } catch {
         setError(t('login.errors.invalidCredentials'))
-      }
-      finally {
+      } finally {
         setSubmitting(false)
       }
     },
-    [t, saveUserData, clearChatData, redirectToHome],
+    [t, saveUserData, redirectToHome],
   )
 
   const renderFormField = (name, type, autoComplete, autoFocus = false) => (
@@ -136,10 +128,7 @@ const LoginPage = () => {
   const renderSignupLink = () => (
     <div className="card-footer p-4">
       <div className="text-center">
-        <span>
-          {t('nav.noAccount')}
-          {' '}
-        </span>
+        <span>{t('nav.noAccount')} </span>
         <Link to={ROUTES.SIGNUP}>{t('nav.signup')}</Link>
       </div>
     </div>

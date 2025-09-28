@@ -44,7 +44,7 @@ const ChatPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { channels, messages, status, sending, currentChannelId } = useSelector(state => state.chat)
+  const { channels, messages, status, sending, currentChannelId } = useSelector((state) => state.chat)
 
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
@@ -60,27 +60,27 @@ const ChatPage = () => {
   const [removeTargetId, setRemoveTargetId] = useState(null)
 
   const currentChannel = useMemo(
-    () => channels.find(c => c.id === currentChannelId) || channels[0] || {},
+    () => channels.find((c) => c.id === currentChannelId) || channels[0] || {},
     [channels, currentChannelId],
   )
 
   const channelMessages = useMemo(
-    () => messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)),
+    () => messages.filter((m) => m.channelId === (currentChannelId || currentChannel?.id)),
     [messages, currentChannelId, currentChannel?.id],
   )
 
-  const getMessageCountText = useCallback(count => t('chat.messageCount', { count }), [t])
+  const getMessageCountText = useCallback((count) => t('chat.messageCount', { count }), [t])
 
   const createChannelSchema = useMemo(
     () =>
       Yup.object({
         name: Yup.string()
-          .transform(v => v?.trim())
+          .transform((v) => v?.trim())
           .min(VALIDATION_RULES.MIN_LENGTH, t('chat.validation.length'))
           .max(VALIDATION_RULES.MAX_LENGTH, t('chat.validation.length'))
           .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase()
-            return !trimmed || !channels.some(c => c.name?.trim().toLowerCase() === trimmed)
+            return !trimmed || !channels.some((c) => c.name?.trim().toLowerCase() === trimmed)
           })
           .required(t('chat.validation.required')),
       }),
@@ -91,18 +91,18 @@ const ChatPage = () => {
     () =>
       Yup.object({
         name: Yup.string()
-          .transform(v => v?.trim())
+          .transform((v) => v?.trim())
           .min(VALIDATION_RULES.MIN_LENGTH, t('chat.validation.length'))
           .max(VALIDATION_RULES.MAX_LENGTH, t('chat.validation.length'))
           .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase()
             if (!trimmed) return true
 
-            const currentChannel = channels.find(c => c.id === renameData.id)
+            const currentChannel = channels.find((c) => c.id === renameData.id)
             const currentName = currentChannel?.name?.trim().toLowerCase()
             if (trimmed === currentName) return false
 
-            return !channels.some(c => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed)
+            return !channels.some((c) => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed)
           })
           .required(t('chat.validation.required')),
       }),
@@ -164,7 +164,7 @@ const ChatPage = () => {
   )
 
   const handleDropdownToggle = useCallback((id) => {
-    setDropdownOpenId(prev => (prev === id ? null : id))
+    setDropdownOpenId((prev) => (prev === id ? null : id))
   }, [])
 
   const handleMessageSubmit = useCallback(
@@ -180,8 +180,7 @@ const ChatPage = () => {
       try {
         await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap()
         setMessageBody('')
-      }
-      catch {
+      } catch {
         notifyNetworkError(t)
       }
     },
@@ -189,24 +188,22 @@ const ChatPage = () => {
   )
 
   const openModal = useCallback((type, data = {}) => {
-    setModals(prev => ({ ...prev, [type]: true }))
+    setModals((prev) => ({ ...prev, [type]: true }))
     setDropdownOpenId(null)
 
     if (type === MODAL_TYPES.RENAME) {
       setRenameData(data)
-    }
-    else if (type === MODAL_TYPES.REMOVE) {
+    } else if (type === MODAL_TYPES.REMOVE) {
       setRemoveTargetId(data.id)
     }
   }, [])
 
   const closeModal = useCallback((type) => {
-    setModals(prev => ({ ...prev, [type]: false }))
+    setModals((prev) => ({ ...prev, [type]: false }))
 
     if (type === MODAL_TYPES.RENAME) {
       setRenameData({ id: null, name: '' })
-    }
-    else if (type === MODAL_TYPES.REMOVE) {
+    } else if (type === MODAL_TYPES.REMOVE) {
       setRemoveTargetId(null)
     }
   }, [])
@@ -223,11 +220,9 @@ const ChatPage = () => {
         resetForm()
         closeModal(MODAL_TYPES.ADD)
         notifyChannelCreated(t)
-      }
-      catch {
+      } catch {
         notifyNetworkError(t)
-      }
-      finally {
+      } finally {
         setSubmitting(false)
       }
     },
@@ -246,11 +241,9 @@ const ChatPage = () => {
         resetForm()
         closeModal(MODAL_TYPES.RENAME)
         notifyChannelRenamed(t)
-      }
-      catch {
+      } catch {
         notifyNetworkError(t)
-      }
-      finally {
+      } finally {
         setSubmitting(false)
       }
     },
@@ -264,8 +257,7 @@ const ChatPage = () => {
       await dispatch(removeChannel({ id: removeTargetId })).unwrap()
       closeModal(MODAL_TYPES.REMOVE)
       notifyChannelRemoved(t)
-    }
-    catch {
+    } catch {
       notifyNetworkError(t)
     }
   }, [dispatch, removeTargetId, closeModal, t])
@@ -283,7 +275,7 @@ const ChatPage = () => {
             role="dialog"
             aria-modal="true"
             style={{ display: 'block' }}
-            onMouseDown={e => e.target === e.currentTarget && closeModal(type)}
+            onMouseDown={(e) => e.target === e.currentTarget && closeModal(type)}
           >
             <div className="modal-dialog modal-dialog-centered" role="document">
               <div className="modal-content">
@@ -366,13 +358,8 @@ const ChatPage = () => {
 
   const renderMessageItem = useCallback(
     (msg, idx) => (
-      <div className="text-break mb-2" key={msg.id ?? `${msg.channelId}-${idx}`}>
-        <b>
-          {msg.username}
-          :
-        </b>
-        {' '}
-        {msg.body}
+      <div className="text-break mb-2" key={msg.id || `msg-${msg.channelId || 'unknown'}-${idx}`}>
+        <b>{msg.username}:</b> {msg.body}
       </div>
     ),
     [],
@@ -389,7 +376,7 @@ const ChatPage = () => {
           id="name"
           className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
           autoFocus={autoFocus}
-          onFocus={selectOnFocus ? e => e.target.select() : undefined}
+          onFocus={selectOnFocus ? (e) => e.target.select() : undefined}
         />
         <ErrorMessage name="name" component="div" className="invalid-feedback" />
       </>
@@ -462,10 +449,7 @@ const ChatPage = () => {
               <div className="d-flex flex-column h-100">
                 <div className="bg-light mb-4 p-3 shadow-sm small">
                   <p className="m-0">
-                    <b>
-                      #
-                      {currentChannel?.name || ''}
-                    </b>
+                    <b>#{currentChannel?.name || ''}</b>
                   </p>
                   <span className="text-muted">{getMessageCountText(channelMessages.length)}</span>
                 </div>
@@ -485,7 +469,7 @@ const ChatPage = () => {
                         placeholder={status === 'loading' ? t('loading') : t('chat.enterMessage')}
                         className="border-0 p-0 ps-2 form-control"
                         value={messageBody}
-                        onChange={e => setMessageBody(e.target.value)}
+                        onChange={(e) => setMessageBody(e.target.value)}
                         autoComplete="off"
                         disabled={sending === 'loading'}
                         autoFocus

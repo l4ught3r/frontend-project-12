@@ -39,11 +39,6 @@ const SignupPage = () => {
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
-  const clearChatData = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEYS.CHAT_MESSAGES)
-    localStorage.removeItem(STORAGE_KEYS.CHAT_CHANNELS)
-  }, [])
-
   const saveUserData = useCallback((token, username) => {
     localStorage.setItem(STORAGE_KEYS.TOKEN, token)
     localStorage.setItem(STORAGE_KEYS.USERNAME, username)
@@ -103,18 +98,15 @@ const SignupPage = () => {
         const finalUsername = responseUsername || username
 
         saveUserData(token, finalUsername)
-        clearChatData()
         redirectToHome()
-      }
-      catch (err) {
+      } catch (err) {
         const status = err.response?.status
         setError(getErrorMessage(status))
-      }
-      finally {
+      } finally {
         setSubmitting(false)
       }
     },
-    [saveUserData, clearChatData, redirectToHome, getErrorMessage],
+    [saveUserData, redirectToHome, getErrorMessage],
   )
 
   const renderFormField = (name, type, autoComplete, autoFocus = false, errors, touched) => {
@@ -182,10 +174,7 @@ const SignupPage = () => {
   const renderLoginLink = () => (
     <div className="card-footer p-4">
       <div className="text-center">
-        <span>
-          {t('nav.hasAccount')}
-          {' '}
-        </span>
+        <span>{t('nav.hasAccount')} </span>
         <Link to={ROUTES.LOGIN}>{t('nav.login')}</Link>
       </div>
     </div>
