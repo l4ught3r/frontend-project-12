@@ -4,6 +4,9 @@ lint:
 fix:
 	make -C frontend fix
 
+format:
+	make -C frontend format
+
 install:
 	npm ci
 	make -C frontend install

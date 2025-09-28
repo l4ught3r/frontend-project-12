@@ -78,7 +78,9 @@ const ChatPage = () => {
           .max(20, t('chat.validation.length'))
           .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase();
-            if (!trimmed) {return true;}
+            if (!trimmed) {
+              return true;
+            }
             // Проверяем, что имя отличается от текущего
             const currentChannel = channels.find((c) => c.id === renameData.id);
             const currentName = currentChannel?.name?.trim().toLowerCase();
@@ -132,7 +134,9 @@ const ChatPage = () => {
       e.preventDefault();
       const trimmed = messageBody.trim();
       const channelId = currentChannelId || currentChannel?.id;
-      if (!trimmed || !channelId) {return;}
+      if (!trimmed || !channelId) {
+        return;
+      }
       const filteredMessage = filterProfanity(trimmed);
       try {
         await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap();
@@ -166,7 +170,9 @@ const ChatPage = () => {
   const handleCreateChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
       const name = values.name?.trim();
-      if (!name) {return;}
+      if (!name) {
+        return;
+      }
       const filteredName = filterProfanity(name);
       try {
         await dispatch(createChannel({ name: filteredName })).unwrap();
@@ -186,7 +192,9 @@ const ChatPage = () => {
   const handleRenameChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
       const name = values.name?.trim();
-      if (!name || !renameData.id) {return;}
+      if (!name || !renameData.id) {
+        return;
+      }
       const filteredName = filterProfanity(name);
       try {
         await dispatch(
@@ -209,7 +217,9 @@ const ChatPage = () => {
     [dispatch, renameData.id, closeModal, t],
   );
   const handleRemoveChannel = useCallback(async () => {
-    if (!removeTargetId) {return;}
+    if (!removeTargetId) {
+      return;
+    }
     try {
       await dispatch(removeChannel({ id: removeTargetId })).unwrap();
       closeModal('remove');
@@ -222,7 +232,9 @@ const ChatPage = () => {
   }, [dispatch, removeTargetId, closeModal, t]);
   // Render helpers
   const renderModal = (type, title, children) => {
-    if (!modals[type]) {return null;}
+    if (!modals[type]) {
+      return null;
+    }
     return (
       <>
         <div className="fade modal-backdrop show" onClick={() => closeModal(type)} />

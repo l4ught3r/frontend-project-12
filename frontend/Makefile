@@ -4,6 +4,9 @@ install:
 start:
 	npm start
 
+format:
+	npx prettier --write .
+
 build:
 	npm run build
 	

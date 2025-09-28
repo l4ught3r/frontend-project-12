@@ -11,12 +11,16 @@ const getAuthHeaders = () => ({
 });
 const createApiRequest = (method, url, data = null) => {
   const config = { headers: getAuthHeaders() };
-  if (data) {config.data = data;}
+  if (data) {
+    config.data = data;
+  }
   return axios[method](url, ...(data ? [data, config] : [config]));
 };
 // Утилиты для нормализации данных
 const extractUsername = (obj) => {
-  if (!obj || typeof obj !== 'object') {return DEFAULT_USERNAME;}
+  if (!obj || typeof obj !== 'object') {
+    return DEFAULT_USERNAME;
+  }
   return (
     obj.username ||
     obj.nickname ||
@@ -29,7 +33,9 @@ const extractUsername = (obj) => {
   );
 };
 const normalizeMessage = (payload) => {
-  if (!payload) {return null;}
+  if (!payload) {
+    return null;
+  }
   // Обработка формата { data: { attributes: {...} } }
   if (payload.data?.attributes) {
     const { data } = payload;
@@ -60,13 +66,17 @@ const normalizeMessage = (payload) => {
   };
 };
 const normalizeChannel = (payload) => {
-  if (!payload) {return null;}
+  if (!payload) {
+    return null;
+  }
   const data = payload.data || payload;
   const attributes = data.attributes || payload.attributes || {};
   const id = payload.id || data.id || attributes.id;
   const name = payload.name || data.name || attributes.name;
   const removable = payload.removable ?? attributes.removable ?? data.removable ?? true;
-  if (id === null || !name) {return null;}
+  if (id === null || !name) {
+    return null;
+  }
   return {
     id: Number(id),
     name: String(name),
@@ -77,7 +87,9 @@ const normalizeChannel = (payload) => {
 const isDuplicateMessage = (messages, message) => message?.id !== null && messages.some((m) => m.id === message.id);
 const removeOptimisticMessages = (messages, channelId, body, username) =>
   messages.filter((m) => {
-    if (!m.isOptimistic) {return true;}
+    if (!m.isOptimistic) {
+      return true;
+    }
     return !(m.body === body && m.channelId === channelId && m.username === username);
   });
 const persistToStorage = (channels, messages) => {
@@ -164,7 +176,9 @@ const chatSlice = createSlice({
   reducers: {
     messageReceived: (state, action) => {
       const message = normalizeMessage(action.payload);
-      if (!message?.channelId) {return;}
+      if (!message?.channelId) {
+        return;
+      }
       state.messages = removeOptimisticMessages(state.messages, message.channelId, message.body, message.username);
       if (!isDuplicateMessage(state.messages, message)) {
         state.messages.push(message);
@@ -176,7 +190,9 @@ const chatSlice = createSlice({
     },
     channelReceived: (state, action) => {
       const channel = normalizeChannel(action.payload);
-      if (!channel) {return;}
+      if (!channel) {
+        return;
+      }
       const exists = state.channels.some((c) => c.id === channel.id);
       if (!exists) {
         state.channels.push(channel);
@@ -185,13 +201,17 @@ const chatSlice = createSlice({
     },
     channelRenamed: (state, action) => {
       const channel = normalizeChannel(action.payload);
-      if (!channel) {return;}
+      if (!channel) {
+        return;
+      }
       state.channels = state.channels.map((c) => (c.id === channel.id ? { ...c, name: channel.name } : c));
       persistToStorage(state.channels, null);
     },
     channelRemoved: (state, action) => {
       const id = Number(action.payload?.id ?? action.payload?.data?.id ?? action.payload);
-      if (!id) {return;}
+      if (!id) {
+        return;
+      }
       state.channels = state.channels.filter((c) => c.id !== id);
       state.messages = state.messages.filter((m) => m.channelId !== id);
       if (state.currentChannelId === id) {
@@ -260,7 +280,9 @@ const chatSlice = createSlice({
       .addCase(createChannel.fulfilled, (state, action) => {
         const channel = normalizeChannel(action.payload);
         const fallbackName = action.meta.arg.name;
-        if (!channel?.id) {return;}
+        if (!channel?.id) {
+          return;
+        }
         const finalChannel = {
           id: channel.id,
           name: channel.name || fallbackName,
