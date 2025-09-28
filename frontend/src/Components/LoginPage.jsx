@@ -64,11 +64,28 @@ const LoginPage = () => {
                         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
                           <h1 className="text-center mb-4">{t('login.title')}</h1>
                           <div className="form-floating mb-3">
-                            <Field name="username" type="text" autoComplete="username" autoFocus required placeholder={t('login.username')} id="username" className="form-control" />
+                            <Field
+                              name="username"
+                              type="text"
+                              autoComplete="username"
+                              autoFocus
+                              required
+                              placeholder={t('login.username')}
+                              id="username"
+                              className="form-control"
+                            />
                             <label htmlFor="username">{t('login.username')}</label>
                           </div>
                           <div className="form-floating mb-4">
-                            <Field name="password" type="password" autoComplete="current-password" required placeholder={t('login.password')} id="password" className="form-control" />
+                            <Field
+                              name="password"
+                              type="password"
+                              autoComplete="current-password"
+                              required
+                              placeholder={t('login.password')}
+                              id="password"
+                              className="form-control"
+                            />
                             <label htmlFor="password">{t('login.password')}</label>
                           </div>
                           {error && (

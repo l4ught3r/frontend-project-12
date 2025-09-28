@@ -4,9 +4,22 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Formik, Form, Field, ErrorMessage } from 'formik'
 import { useTranslation } from 'react-i18next'
 import * as Yup from 'yup'
-import { fetchChatData, sendMessage, setCurrentChannelId, createChannel, renameChannel, removeChannel } from '../chatSlice'
+import {
+  fetchChatData,
+  sendMessage,
+  setCurrentChannelId,
+  createChannel,
+  renameChannel,
+  removeChannel,
+} from '../chatSlice'
 import LanguageSwitcher from './LanguageSwitcher'
-import { notifyChannelCreated, notifyChannelRenamed, notifyChannelRemoved, notifyNetworkError, notifyLoadingError } from '../utils/notifications'
+import {
+  notifyChannelCreated,
+  notifyChannelRenamed,
+  notifyChannelRemoved,
+  notifyNetworkError,
+  notifyLoadingError,
+} from '../utils/notifications'
 import { filterProfanity } from '../utils/profanityFilter'
 const ChatPage = () => {
   const { t } = useTranslation()
@@ -27,8 +40,14 @@ const ChatPage = () => {
     name: '',
   })
   const [removeTargetId, setRemoveTargetId] = useState(null)
-  const currentChannel = useMemo(() => channels.find(c => c.id === currentChannelId) || channels[0] || {}, [channels, currentChannelId])
-  const channelMessages = useMemo(() => messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)), [messages, currentChannelId, currentChannel?.id])
+  const currentChannel = useMemo(
+    () => channels.find(c => c.id === currentChannelId) || channels[0] || {},
+    [channels, currentChannelId],
+  )
+  const channelMessages = useMemo(
+    () => messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)),
+    [messages, currentChannelId, currentChannel?.id],
+  )
   const getMessageCountText = useCallback(
     (count) => {
       return t('chat.messageCount', { count })
@@ -218,7 +237,14 @@ const ChatPage = () => {
     return (
       <>
         <div className="fade modal-backdrop show" onClick={() => closeModal(type)} />
-        <div className="fade modal show" tabIndex="-1" role="dialog" aria-modal="true" style={{ display: 'block' }} onMouseDown={e => e.target === e.currentTarget && closeModal(type)}>
+        <div
+          className="fade modal show"
+          tabIndex="-1"
+          role="dialog"
+          aria-modal="true"
+          style={{ display: 'block' }}
+          onMouseDown={e => e.target === e.currentTarget && closeModal(type)}
+        >
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -239,7 +265,11 @@ const ChatPage = () => {
     return (
       <li className="nav-item w-100" key={channel.id}>
         <div className="d-flex dropdown btn-group">
-          <button type="button" className={`w-100 rounded-0 text-start text-truncate btn${isActive ? ' btn-secondary' : ' btn-light'}`} onClick={() => handleChannelClick(channel.id)}>
+          <button
+            type="button"
+            className={`w-100 rounded-0 text-start text-truncate btn${isActive ? ' btn-secondary' : ' btn-light'}`}
+            onClick={() => handleChannelClick(channel.id)}
+          >
             <span className="me-1" style={{ color: isActive ? '#fff' : '#000' }}>
               #
             </span>
@@ -317,15 +347,29 @@ const ChatPage = () => {
             <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
               <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
                 <b>{t('chat.channels')}</b>
-                <button type="button" className="p-0 text-primary btn btn-group-vertical" onClick={() => openModal('add')} aria-label={t('chat.addChannel')}>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor" className="bi bi-plus-square">
+                <button
+                  type="button"
+                  className="p-0 text-primary btn btn-group-vertical"
+                  onClick={() => openModal('add')}
+                  aria-label={t('chat.addChannel')}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 16 16"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    className="bi bi-plus-square"
+                  >
                     <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
                     <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                   </svg>
                   <span className="visually-hidden">{t('chat.addChannelButton')}</span>
                 </button>
               </div>
-              <ul className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">{channels.map(renderChannelItem)}</ul>
+              <ul className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
+                {channels.map(renderChannelItem)}
+              </ul>
             </div>
             {/* Chat area */}
             <div className="col p-0 h-100">
@@ -370,8 +414,18 @@ const ChatPage = () => {
                         disabled={sending === 'loading'}
                         autoFocus
                       />
-                      <button type="submit" disabled={!messageBody.trim() || sending === 'loading'} className="btn btn-group-vertical">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
+                      <button
+                        type="submit"
+                        disabled={!messageBody.trim() || sending === 'loading'}
+                        className="btn btn-group-vertical"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 16 16"
+                          width="20"
+                          height="20"
+                          fill="currentColor"
+                        >
                           <path
                             fillRule="evenodd"
                             d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"
@@ -390,16 +444,32 @@ const ChatPage = () => {
         {renderModal(
           'add',
           t('chat.modals.addChannel.title'),
-          <Formik initialValues={{ name: '' }} validationSchema={createChannelSchema} validateOnChange={false} validateOnBlur={false} onSubmit={handleCreateChannel}>
+          <Formik
+            initialValues={{ name: '' }}
+            validationSchema={createChannelSchema}
+            validateOnChange={false}
+            validateOnBlur={false}
+            onSubmit={handleCreateChannel}
+          >
             {({ isSubmitting, errors, touched }) => (
               <Form>
                 <label htmlFor="name" className="visually-hidden">
                   {t('chat.modals.addChannel.channelName')}
                 </label>
-                <Field name="name" id="name" className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`} autoFocus />
+                <Field
+                  name="name"
+                  id="name"
+                  className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
+                  autoFocus
+                />
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
-                  <button type="button" className="me-2 btn btn-secondary" onClick={() => closeModal('add')} disabled={isSubmitting}>
+                  <button
+                    type="button"
+                    className="me-2 btn btn-secondary"
+                    onClick={() => closeModal('add')}
+                    disabled={isSubmitting}
+                  >
                     {t('cancel')}
                   </button>
                   <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
@@ -426,10 +496,21 @@ const ChatPage = () => {
                 <label htmlFor="name" className="visually-hidden">
                   {t('chat.modals.renameChannel.channelName')}
                 </label>
-                <Field name="name" id="name" className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`} autoFocus onFocus={e => e.target.select()} />
+                <Field
+                  name="name"
+                  id="name"
+                  className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`}
+                  autoFocus
+                  onFocus={e => e.target.select()}
+                />
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
-                  <button type="button" className="me-2 btn btn-secondary" onClick={() => closeModal('rename')} disabled={isSubmitting}>
+                  <button
+                    type="button"
+                    className="me-2 btn btn-secondary"
+                    onClick={() => closeModal('rename')}
+                    disabled={isSubmitting}
+                  >
                     {t('cancel')}
                   </button>
                   <button type="submit" className="btn btn-primary" disabled={isSubmitting}>

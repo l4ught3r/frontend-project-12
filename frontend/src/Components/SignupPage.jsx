@@ -19,7 +19,10 @@ const SignupPage = () => {
   const validationSchema = useMemo(
     () =>
       Yup.object({
-        username: Yup.string().min(3, t('signup.errors.usernameLength')).max(20, t('signup.errors.usernameLength')).required(t('signup.errors.required')),
+        username: Yup.string()
+          .min(3, t('signup.errors.usernameLength'))
+          .max(20, t('signup.errors.usernameLength'))
+          .required(t('signup.errors.required')),
         password: Yup.string().min(6, t('signup.errors.passwordMin')).required(t('signup.errors.required')),
         confirmPassword: Yup.string()
           .oneOf([Yup.ref('password')], t('signup.errors.passwordMatch'))
@@ -102,7 +105,9 @@ const SignupPage = () => {
                               className={`form-control${errors.username && touched.username ? ' is-invalid' : ''}`}
                             />
                             <label htmlFor="username">{t('signup.username')}</label>
-                            {errors.username && touched.username && <div className="invalid-tooltip">{errors.username}</div>}
+                            {errors.username && touched.username && (
+                              <div className="invalid-tooltip">{errors.username}</div>
+                            )}
                           </div>
                           <div className="form-floating mb-3">
                             <Field
@@ -115,7 +120,9 @@ const SignupPage = () => {
                               className={`form-control${errors.password && touched.password ? ' is-invalid' : ''}`}
                             />
                             <label htmlFor="password">{t('signup.password')}</label>
-                            {errors.password && touched.password && <div className="invalid-tooltip">{errors.password}</div>}
+                            {errors.password && touched.password && (
+                              <div className="invalid-tooltip">{errors.password}</div>
+                            )}
                           </div>
                           <div className="form-floating mb-4">
                             <Field
@@ -128,7 +135,9 @@ const SignupPage = () => {
                               className={`form-control${errors.confirmPassword && touched.confirmPassword ? ' is-invalid' : ''}`}
                             />
                             <label htmlFor="confirmPassword">{t('signup.confirmPassword')}</label>
-                            {errors.confirmPassword && touched.confirmPassword && <div className="invalid-tooltip">{errors.confirmPassword}</div>}
+                            {errors.confirmPassword && touched.confirmPassword && (
+                              <div className="invalid-tooltip">{errors.confirmPassword}</div>
+                            )}
                           </div>
                           {error && (
                             <div className="alert alert-danger" role="alert">

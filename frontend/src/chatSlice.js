@@ -21,7 +21,16 @@ const extractUsername = (obj) => {
   if (!obj || typeof obj !== 'object') {
     return DEFAULT_USERNAME
   }
-  return obj.username || obj.nickname || obj.name || obj.user?.username || obj.user?.name || obj.author?.username || obj.sender?.username || DEFAULT_USERNAME
+  return (
+    obj.username ||
+    obj.nickname ||
+    obj.name ||
+    obj.user?.username ||
+    obj.user?.name ||
+    obj.author?.username ||
+    obj.sender?.username ||
+    DEFAULT_USERNAME
+  )
 }
 const normalizeMessage = (payload) => {
   if (!payload) {
@@ -100,7 +109,10 @@ const persistToStorage = (channels, messages) => {
 }
 export const fetchChatData = createAsyncThunk('chat/fetchChatData', async (_, { rejectWithValue }) => {
   try {
-    const [channelsRes, messagesRes] = await Promise.all([createApiRequest('get', '/api/v1/channels'), createApiRequest('get', '/api/v1/messages')])
+    const [channelsRes, messagesRes] = await Promise.all([
+      createApiRequest('get', '/api/v1/channels'),
+      createApiRequest('get', '/api/v1/messages'),
+    ])
     return {
       channels: channelsRes.data?.channels || channelsRes.data?.data?.channels || channelsRes.data || [],
       messages: messagesRes.data?.messages || messagesRes.data?.data?.messages || messagesRes.data || [],
@@ -227,7 +239,9 @@ const chatSlice = createSlice({
         state.channels = normalizedChannels.length > 0 ? normalizedChannels : DEFAULT_CHANNELS
         const messages = Array.isArray(payload.messages) ? payload.messages : Object.values(payload.messages || {})
         const normalizedMessages = messages.map(normalizeMessage).filter(Boolean)
-        const uniqueMessages = normalizedMessages.filter((message, index, arr) => message.id === null || arr.findIndex(m => m.id === message.id) === index)
+        const uniqueMessages = normalizedMessages.filter(
+          (message, index, arr) => message.id === null || arr.findIndex(m => m.id === message.id) === index,
+        )
         state.messages = uniqueMessages
         state.currentChannelId = Number(payload.currentChannelId || state.channels[0]?.id)
         persistToStorage(state.channels, state.messages)
@@ -285,7 +299,9 @@ const chatSlice = createSlice({
           state.channels.push(finalChannel)
         }
         else {
-          state.channels = state.channels.map(c => (c.id === finalChannel.id ? { ...c, name: c.name || finalChannel.name } : c))
+          state.channels = state.channels.map(c =>
+            c.id === finalChannel.id ? { ...c, name: c.name || finalChannel.name } : c,
+          )
         }
         state.currentChannelId = finalChannel.id
         persistToStorage(state.channels, null)
@@ -315,5 +331,6 @@ const chatSlice = createSlice({
       })
   },
 })
-export const { messageReceived, setCurrentChannelId, channelReceived, channelRenamed, channelRemoved } = chatSlice.actions
+export const { messageReceived, setCurrentChannelId, channelReceived, channelRenamed, channelRemoved } =
+  chatSlice.actions
 export default chatSlice.reducer
