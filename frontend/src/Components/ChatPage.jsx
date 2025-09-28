@@ -347,7 +347,7 @@ const ChatPage = () => {
                       <b>
                         {msg.username}
                         :
-                      </b> 
+                      </b>
                       {' '}
                       {msg.body}
                     </div>

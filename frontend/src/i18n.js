@@ -110,7 +110,7 @@ const resources = {
       close: 'Close',
       logout: 'Logout',
       nav: {
-        noAccount: "Don't have an account?",
+        noAccount: 'Don\'t have an account?',
         hasAccount: 'Already have an account?',
         signup: 'Sign up',
         login: 'Log in',

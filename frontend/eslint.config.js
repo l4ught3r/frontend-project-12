@@ -71,6 +71,8 @@ export default [
       '@stylistic/arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
       '@stylistic/jsx-curly-newline': ['error', { multiline: 'consistent', singleline: 'consistent' }], // Контролирует переносы в JSX выражениях
       '@stylistic/jsx-one-expression-per-line': ['error', { allow: 'single-child' }], // Требует размещения JSX выражений на отдельных строках
+      '@stylistic/quotes': ['error', 'single'], // Требует использования одинарных кавычек
+      '@stylistic/no-trailing-spaces': 'error', // Запрещает пробелы в конце строк
 
       // Правила для лучших практик
       'no-var': 'error',
