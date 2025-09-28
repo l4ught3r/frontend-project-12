@@ -1,21 +1,21 @@
-import { useEffect, useState, useMemo } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
-import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
-import axios from 'axios';
-import avatar from '../assets/signupImage.jpg';
-import LanguageSwitcher from './LanguageSwitcher';
+import { useEffect, useState, useMemo } from 'react'
+import { useNavigate, Link } from 'react-router-dom'
+import { Formik, Form, Field } from 'formik'
+import { useTranslation } from 'react-i18next'
+import * as Yup from 'yup'
+import axios from 'axios'
+import avatar from '../assets/signupImage.jpg'
+import LanguageSwitcher from './LanguageSwitcher'
 const SignupPage = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [error, setError] = useState('')
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     if (token) {
-      navigate('/', { replace: true });
+      navigate('/', { replace: true })
     }
-  }, [navigate]);
+  }, [navigate])
   const validationSchema = useMemo(
     () =>
       Yup.object({
@@ -29,34 +29,34 @@ const SignupPage = () => {
           .required(t('signup.errors.required')),
       }),
     [t],
-  );
+  )
   const handleSubmit = async (values, { setSubmitting }) => {
-    setError('');
+    setError('')
     try {
-      const { username, password } = values;
+      const { username, password } = values
       const response = await axios.post('/api/v1/signup', {
         username,
         password,
-      });
-      const { token, username: responseUsername } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', responseUsername || username);
-      localStorage.removeItem('chatMessages');
-      localStorage.removeItem('chatChannels');
-      navigate('/', { replace: true });
+      })
+      const { token, username: responseUsername } = response.data
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', responseUsername || username)
+      localStorage.removeItem('chatMessages')
+      localStorage.removeItem('chatChannels')
+      navigate('/', { replace: true })
     } catch (err) {
-      const status = err.response?.status;
+      const status = err.response?.status
       if (status === 409) {
-        setError(t('signup.errors.userExists'));
+        setError(t('signup.errors.userExists'))
       } else if (status >= 500) {
-        setError(t('signup.errors.serverError'));
+        setError(t('signup.errors.serverError'))
       } else {
-        setError(t('signup.errors.signupFailed'));
+        setError(t('signup.errors.signupFailed'))
       }
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
   return (
     <div className="h-100 bg-light">
       <div className="h-100" id="chat">
@@ -160,6 +160,6 @@ const SignupPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-export default SignupPage;
+  )
+}
+export default SignupPage

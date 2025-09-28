@@ -1,36 +1,36 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Formik, Form, Field } from 'formik';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import avatar from '../assets/loginImage.jpg';
-import LanguageSwitcher from './LanguageSwitcher';
+import { useState, useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Formik, Form, Field } from 'formik'
+import { useTranslation } from 'react-i18next'
+import axios from 'axios'
+import avatar from '../assets/loginImage.jpg'
+import LanguageSwitcher from './LanguageSwitcher'
 const LoginPage = () => {
-  const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [error, setError] = useState('')
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     if (token) {
-      navigate('/', { replace: true });
+      navigate('/', { replace: true })
     }
-  }, [navigate]);
+  }, [navigate])
   const handleSubmit = async (values, { setSubmitting }) => {
-    setError('');
+    setError('')
     try {
-      const response = await axios.post('/api/v1/login', values);
-      const { token, username } = response.data;
-      localStorage.setItem('token', token);
-      localStorage.setItem('username', username || values.username);
-      localStorage.removeItem('chatMessages');
-      localStorage.removeItem('chatChannels');
-      navigate('/', { replace: true });
+      const response = await axios.post('/api/v1/login', values)
+      const { token, username } = response.data
+      localStorage.setItem('token', token)
+      localStorage.setItem('username', username || values.username)
+      localStorage.removeItem('chatMessages')
+      localStorage.removeItem('chatChannels')
+      navigate('/', { replace: true })
     } catch {
-      setError(t('login.errors.invalidCredentials'));
+      setError(t('login.errors.invalidCredentials'))
     } finally {
-      setSubmitting(false);
+      setSubmitting(false)
     }
-  };
+  }
   return (
     <div className="h-100 bg-light">
       <div className="h-100" id="chat">
@@ -111,6 +111,6 @@ const LoginPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-export default LoginPage;
+  )
+}
+export default LoginPage

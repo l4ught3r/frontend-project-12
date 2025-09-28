@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import notFoundImage from '../assets/notFoundImage.svg';
-import LanguageSwitcher from './LanguageSwitcher';
+import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import notFoundImage from '../assets/notFoundImage.svg'
+import LanguageSwitcher from './LanguageSwitcher'
 const NotFoundPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <div className="h-100 bg-light">
       <div className="h-100 d-flex flex-column">
@@ -29,6 +29,6 @@ const NotFoundPage = () => {
         </div>
       </div>
     </div>
-  );
-};
-export default NotFoundPage;
+  )
+}
+export default NotFoundPage
