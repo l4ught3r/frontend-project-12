@@ -42,19 +42,19 @@ const SignupPage = () => {
       localStorage.removeItem('chatChannels')
       navigate('/', { replace: true })
     }
- catch (err) {
+    catch (err) {
       const status = err.response?.status
       if (status === 409) {
         setError(t('signup.errors.userExists'))
       }
- else if (status >= 500) {
+      else if (status >= 500) {
         setError(t('signup.errors.serverError'))
       }
- else {
+      else {
         setError(t('signup.errors.signupFailed'))
       }
     }
- finally {
+    finally {
       setSubmitting(false)
     }
   }

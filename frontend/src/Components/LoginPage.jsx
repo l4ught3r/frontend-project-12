@@ -26,10 +26,10 @@ const LoginPage = () => {
       localStorage.removeItem('chatChannels')
       navigate('/', { replace: true })
     }
- catch {
+    catch {
       setError(t('login.errors.invalidCredentials'))
     }
- finally {
+    finally {
       setSubmitting(false)
     }
   }

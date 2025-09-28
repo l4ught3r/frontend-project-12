@@ -12,7 +12,7 @@ const ChatPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { channels, messages, status, sending, currentChannelId } = useSelector((state) => state.chat)
+  const { channels, messages, status, sending, currentChannelId } = useSelector(state => state.chat)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const [messageBody, setMessageBody] = useState('')
@@ -27,10 +27,10 @@ const ChatPage = () => {
     name: '',
   })
   const [removeTargetId, setRemoveTargetId] = useState(null)
-  const currentChannel = useMemo(() => channels.find((c) => c.id === currentChannelId) || channels[0] || {}, [channels, currentChannelId])
-  const channelMessages = useMemo(() => messages.filter((m) => m.channelId === (currentChannelId || currentChannel?.id)), [messages, currentChannelId, currentChannel?.id])
+  const currentChannel = useMemo(() => channels.find(c => c.id === currentChannelId) || channels[0] || {}, [channels, currentChannelId])
+  const channelMessages = useMemo(() => messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)), [messages, currentChannelId, currentChannel?.id])
   const getMessageCountText = useCallback(
-    (count) => {
+    count => {
       return t('chat.messageCount', { count })
     },
     [t],
@@ -39,12 +39,12 @@ const ChatPage = () => {
     () =>
       Yup.object({
         name: Yup.string()
-          .transform((v) => v?.trim())
+          .transform(v => v?.trim())
           .min(3, t('chat.validation.length'))
           .max(20, t('chat.validation.length'))
-          .test('unique', t('chat.validation.unique'), (value) => {
+          .test('unique', t('chat.validation.unique'), value => {
             const trimmed = value?.trim().toLowerCase()
-            return !trimmed || !channels.some((c) => c.name?.trim().toLowerCase() === trimmed)
+            return !trimmed || !channels.some(c => c.name?.trim().toLowerCase() === trimmed)
           })
           .required(t('chat.validation.required')),
       }),
@@ -54,22 +54,22 @@ const ChatPage = () => {
     () =>
       Yup.object({
         name: Yup.string()
-          .transform((v) => v?.trim())
+          .transform(v => v?.trim())
           .min(3, t('chat.validation.length'))
           .max(20, t('chat.validation.length'))
-          .test('unique', t('chat.validation.unique'), (value) => {
+          .test('unique', t('chat.validation.unique'), value => {
             const trimmed = value?.trim().toLowerCase()
             if (!trimmed) {
               return true
             }
             // Проверяем, что имя отличается от текущего
-            const currentChannel = channels.find((c) => c.id === renameData.id)
+            const currentChannel = channels.find(c => c.id === renameData.id)
             const currentName = currentChannel?.name?.trim().toLowerCase()
             if (trimmed === currentName) {
               return false // То же имя - показываем ошибку
             }
             // Проверяем уникальность среди других каналов
-            return !channels.some((c) => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed)
+            return !channels.some(c => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed)
           })
           .required(t('chat.validation.required')),
       }),
@@ -105,13 +105,13 @@ const ChatPage = () => {
     navigate('/login', { replace: true })
   }, [navigate])
   const handleChannelClick = useCallback(
-    (id) => {
+    id => {
       dispatch(setCurrentChannelId(id))
     },
     [dispatch],
   )
   const handleMessageSubmit = useCallback(
-    async (e) => {
+    async e => {
       e.preventDefault()
       const trimmed = messageBody.trim()
       const channelId = currentChannelId || currentChannel?.id
@@ -123,33 +123,33 @@ const ChatPage = () => {
         await dispatch(sendMessage({ body: filteredMessage, channelId })).unwrap()
         setMessageBody('')
       }
- catch {
+      catch {
         // Ошибка уже обработана в slice
       }
     },
     [messageBody, currentChannelId, currentChannel?.id, dispatch],
   )
   const openModal = useCallback((type, data = {}) => {
-    setModals((prev) => ({ ...prev, [type]: true }))
+    setModals(prev => ({ ...prev, [type]: true }))
     setDropdownOpenId(null)
     if (type === 'rename') {
       setRenameData(data)
     }
- else if (type === 'remove') {
+    else if (type === 'remove') {
       setRemoveTargetId(data.id)
     }
   }, [])
-  const closeModal = useCallback((type) => {
-    setModals((prev) => ({ ...prev, [type]: false }))
+  const closeModal = useCallback(type => {
+    setModals(prev => ({ ...prev, [type]: false }))
     if (type === 'rename') {
       setRenameData({ id: null, name: '' })
     }
- else if (type === 'remove') {
+    else if (type === 'remove') {
       setRemoveTargetId(null)
     }
   }, [])
-  const handleDropdownToggle = useCallback((id) => {
-    setDropdownOpenId((prev) => (prev === id ? null : id))
+  const handleDropdownToggle = useCallback(id => {
+    setDropdownOpenId(prev => (prev === id ? null : id))
   }, [])
   const handleCreateChannel = useCallback(
     async (values, { setSubmitting, resetForm }) => {
@@ -164,12 +164,12 @@ const ChatPage = () => {
         closeModal('add')
         notifyChannelCreated(t)
       }
- catch (error) {
+      catch (error) {
         // eslint-disable-next-line no-console
         console.error('Failed to create channel:', error)
         notifyNetworkError(t)
       }
- finally {
+      finally {
         setSubmitting(false)
       }
     },
@@ -193,12 +193,12 @@ const ChatPage = () => {
         closeModal('rename')
         notifyChannelRenamed(t)
       }
- catch (error) {
+      catch (error) {
         // eslint-disable-next-line no-console
         console.error('Failed to rename channel:', error)
         notifyNetworkError(t)
       }
- finally {
+      finally {
         setSubmitting(false)
       }
     },
@@ -213,7 +213,7 @@ const ChatPage = () => {
       closeModal('remove')
       notifyChannelRemoved(t)
     }
- catch (error) {
+    catch (error) {
       // eslint-disable-next-line no-console
       console.error('Failed to remove channel:', error)
       notifyNetworkError(t)
@@ -227,7 +227,7 @@ const ChatPage = () => {
     return (
       <>
         <div className="fade modal-backdrop show" onClick={() => closeModal(type)} />
-        <div className="fade modal show" tabIndex="-1" role="dialog" aria-modal="true" style={{ display: 'block' }} onMouseDown={(e) => e.target === e.currentTarget && closeModal(type)}>
+        <div className="fade modal show" tabIndex="-1" role="dialog" aria-modal="true" style={{ display: 'block' }} onMouseDown={e => e.target === e.currentTarget && closeModal(type)}>
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -241,7 +241,7 @@ const ChatPage = () => {
       </>
     )
   }
-  const renderChannelItem = (channel) => {
+  const renderChannelItem = channel => {
     const isActive = channel.id === (currentChannelId || currentChannel?.id)
     const isRemovable = channel.removable !== false && channel.id > 2
     const showDropdown = dropdownOpenId === channel.id
@@ -368,7 +368,7 @@ const ChatPage = () => {
                         placeholder={status === 'loading' ? t('loading') : t('chat.enterMessage')}
                         className="border-0 p-0 ps-2 form-control"
                         value={messageBody}
-                        onChange={(e) => setMessageBody(e.target.value)}
+                        onChange={e => setMessageBody(e.target.value)}
                         autoComplete="off"
                         disabled={sending === 'loading'}
                         autoFocus
@@ -429,7 +429,7 @@ const ChatPage = () => {
                 <label htmlFor="name" className="visually-hidden">
                   {t('chat.modals.renameChannel.channelName')}
                 </label>
-                <Field name="name" id="name" className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`} autoFocus onFocus={(e) => e.target.select()} />
+                <Field name="name" id="name" className={`mb-2 form-control${errors.name && touched.name ? ' is-invalid' : ''}`} autoFocus onFocus={e => e.target.select()} />
                 <ErrorMessage name="name" component="div" className="invalid-feedback" />
                 <div className="d-flex justify-content-end">
                   <button type="button" className="me-2 btn btn-secondary" onClick={() => closeModal('rename')} disabled={isSubmitting}>

@@ -17,13 +17,13 @@ const createApiRequest = (method, url, data = null) => {
   return axios[method](url, ...(data ? [data, config] : [config]))
 }
 // Утилиты для нормализации данных
-const extractUsername = (obj) => {
+const extractUsername = obj => {
   if (!obj || typeof obj !== 'object') {
     return DEFAULT_USERNAME
   }
   return obj.username || obj.nickname || obj.name || obj.user?.username || obj.user?.name || obj.author?.username || obj.sender?.username || DEFAULT_USERNAME
 }
-const normalizeMessage = (payload) => {
+const normalizeMessage = payload => {
   if (!payload) {
     return null
   }
@@ -36,10 +36,10 @@ const normalizeMessage = (payload) => {
     if (data.id !== null) {
       id = Number(data.id)
     }
- else if (attrs.id !== null) {
+    else if (attrs.id !== null) {
       id = Number(attrs.id)
     }
- else {
+    else {
       id = undefined
     }
 
@@ -58,7 +58,7 @@ const normalizeMessage = (payload) => {
     username: extractUsername(payload),
   }
 }
-const normalizeChannel = (payload) => {
+const normalizeChannel = payload => {
   if (!payload) {
     return null
   }
@@ -77,9 +77,9 @@ const normalizeChannel = (payload) => {
   }
 }
 // Утилиты для работы с состоянием
-const isDuplicateMessage = (messages, message) => message?.id !== null && messages.some((m) => m.id === message.id)
+const isDuplicateMessage = (messages, message) => message?.id !== null && messages.some(m => m.id === message.id)
 const removeOptimisticMessages = (messages, channelId, body, username) =>
-  messages.filter((m) => {
+  messages.filter(m => {
     if (!m.isOptimistic) {
       return true
     }
@@ -94,7 +94,7 @@ const persistToStorage = (channels, messages) => {
       localStorage.setItem('chatMessages', JSON.stringify(messages))
     }
   }
- catch (error) {
+  catch (error) {
     // eslint-disable-next-line no-console
     console.warn('Failed to persist data to localStorage:', error)
   }
@@ -109,7 +109,7 @@ export const fetchChatData = createAsyncThunk('chat/fetchChatData', async (_, { 
       currentChannelId: channelsRes.data?.currentChannelId || channelsRes.data?.data?.currentChannelId,
     }
   }
- catch (error) {
+  catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -126,7 +126,7 @@ export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ body, c
     })
     return response.data
   }
- catch (error) {
+  catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -137,7 +137,7 @@ export const createChannel = createAsyncThunk('chat/createChannel', async ({ nam
     })
     return response.data
   }
- catch (error) {
+  catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -146,7 +146,7 @@ export const renameChannel = createAsyncThunk('chat/renameChannel', async ({ id,
     const response = await createApiRequest('patch', `/api/v1/channels/${id}`, { name })
     return response.data
   }
- catch (error) {
+  catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -155,7 +155,7 @@ export const removeChannel = createAsyncThunk('chat/removeChannel', async ({ id 
     const response = await createApiRequest('delete', `/api/v1/channels/${id}`)
     return { id, data: response.data }
   }
- catch (error) {
+  catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -189,7 +189,7 @@ const chatSlice = createSlice({
       if (!channel) {
         return
       }
-      const exists = state.channels.some((c) => c.id === channel.id)
+      const exists = state.channels.some(c => c.id === channel.id)
       if (!exists) {
         state.channels.push(channel)
         persistToStorage(state.channels, null)
@@ -200,7 +200,7 @@ const chatSlice = createSlice({
       if (!channel) {
         return
       }
-      state.channels = state.channels.map((c) => (c.id === channel.id ? { ...c, name: channel.name } : c))
+      state.channels = state.channels.map(c => (c.id === channel.id ? { ...c, name: channel.name } : c))
       persistToStorage(state.channels, null)
     },
     channelRemoved: (state, action) => {
@@ -208,17 +208,17 @@ const chatSlice = createSlice({
       if (!id) {
         return
       }
-      state.channels = state.channels.filter((c) => c.id !== id)
-      state.messages = state.messages.filter((m) => m.channelId !== id)
+      state.channels = state.channels.filter(c => c.id !== id)
+      state.messages = state.messages.filter(m => m.channelId !== id)
       if (state.currentChannelId === id) {
         state.currentChannelId = state.channels[0]?.id ?? null
       }
       persistToStorage(state.channels, state.messages)
     },
   },
-  extraReducers: (builder) => {
+  extraReducers: builder => {
     builder
-      .addCase(fetchChatData.pending, (state) => {
+      .addCase(fetchChatData.pending, state => {
         state.status = 'loading'
       })
       .addCase(fetchChatData.fulfilled, (state, action) => {
@@ -229,7 +229,7 @@ const chatSlice = createSlice({
         state.channels = normalizedChannels.length > 0 ? normalizedChannels : DEFAULT_CHANNELS
         const messages = Array.isArray(payload.messages) ? payload.messages : Object.values(payload.messages || {})
         const normalizedMessages = messages.map(normalizeMessage).filter(Boolean)
-        const uniqueMessages = normalizedMessages.filter((message, index, arr) => message.id === null || arr.findIndex((m) => m.id === message.id) === index)
+        const uniqueMessages = normalizedMessages.filter((message, index, arr) => message.id === null || arr.findIndex(m => m.id === message.id) === index)
         state.messages = uniqueMessages
         state.currentChannelId = Number(payload.currentChannelId || state.channels[0]?.id)
         persistToStorage(state.channels, state.messages)
@@ -259,7 +259,7 @@ const chatSlice = createSlice({
         state.sending = 'succeeded'
         const { channelId } = action.meta.arg
         // Удаляем все оптимистические сообщения для канала
-        state.messages = state.messages.filter((m) => !(m.isOptimistic && m.channelId === Number(channelId)))
+        state.messages = state.messages.filter(m => !(m.isOptimistic && m.channelId === Number(channelId)))
         persistToStorage(null, state.messages)
       })
       .addCase(sendMessage.rejected, (state, action) => {
@@ -267,7 +267,7 @@ const chatSlice = createSlice({
         state.error = action.payload
         const { channelId } = action.meta.arg
         // Удаляем оптимистическое сообщение при ошибке
-        state.messages = state.messages.filter((m) => !(m.isOptimistic && m.channelId === Number(channelId)))
+        state.messages = state.messages.filter(m => !(m.isOptimistic && m.channelId === Number(channelId)))
         persistToStorage(null, state.messages)
       })
       // Create channel
@@ -282,12 +282,12 @@ const chatSlice = createSlice({
           name: channel.name || fallbackName,
           removable: channel.removable,
         }
-        const exists = state.channels.some((c) => c.id === finalChannel.id)
+        const exists = state.channels.some(c => c.id === finalChannel.id)
         if (!exists) {
           state.channels.push(finalChannel)
         }
- else {
-          state.channels = state.channels.map((c) => (c.id === finalChannel.id ? { ...c, name: c.name || finalChannel.name } : c))
+        else {
+          state.channels = state.channels.map(c => (c.id === finalChannel.id ? { ...c, name: c.name || finalChannel.name } : c))
         }
         state.currentChannelId = finalChannel.id
         persistToStorage(state.channels, null)
@@ -301,15 +301,15 @@ const chatSlice = createSlice({
         const id = normalized?.id ?? Number(action.meta.arg.id)
         const name = normalized?.name ?? action.meta.arg.name
         if (id && name) {
-          state.channels = state.channels.map((c) => (c.id === id ? { ...c, name } : c))
+          state.channels = state.channels.map(c => (c.id === id ? { ...c, name } : c))
           persistToStorage(state.channels, null)
         }
       })
       // Remove channel
       .addCase(removeChannel.fulfilled, (state, action) => {
         const id = Number(action.meta.arg.id)
-        state.channels = state.channels.filter((c) => c.id !== id)
-        state.messages = state.messages.filter((m) => m.channelId !== id)
+        state.channels = state.channels.filter(c => c.id !== id)
+        state.messages = state.messages.filter(m => m.channelId !== id)
         if (state.currentChannelId === id) {
           state.currentChannelId = state.channels[0]?.id ?? null
         }

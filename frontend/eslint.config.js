@@ -2,6 +2,7 @@ import js from '@eslint/js'
 import globals from 'globals'
 import react from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
+import stylistic from '@stylistic/eslint-plugin'
 
 export default [
   // Глобальные игнорируемые файлы
@@ -15,6 +16,7 @@ export default [
     plugins: {
       react,
       'react-hooks': reactHooks,
+      '@stylistic': stylistic,
     },
     languageOptions: {
       ecmaVersion: 2024,
@@ -65,6 +67,8 @@ export default [
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],
+      '@stylistic/indent': ['error', 2],
+      '@stylistic/arrow-parens': ['error', 'as-needed'], // Убирает ненужные скобки в стрелочных функциях
 
       // Правила для лучших практик
       'no-var': 'error',

@@ -22,7 +22,7 @@ const socketEvents = [
 ]
 socketEvents.forEach(({ event, action }) => {
   socket.off(event)
-  socket.on(event, (payload) => {
+  socket.on(event, payload => {
     store.dispatch(action(payload))
   })
 })
