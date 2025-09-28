@@ -60,9 +60,11 @@ const LoginPage = () => {
 
         saveUserData(token, finalUsername)
         redirectToHome()
-      } catch {
+      }
+      catch {
         setError(t('login.errors.invalidCredentials'))
-      } finally {
+      }
+      finally {
         setSubmitting(false)
       }
     },
@@ -128,7 +130,10 @@ const LoginPage = () => {
   const renderSignupLink = () => (
     <div className="card-footer p-4">
       <div className="text-center">
-        <span>{t('nav.noAccount')} </span>
+        <span>
+          {t('nav.noAccount')}
+          {' '}
+        </span>
         <Link to={ROUTES.SIGNUP}>{t('nav.signup')}</Link>
       </div>
     </div>

@@ -99,10 +99,12 @@ const SignupPage = () => {
 
         saveUserData(token, finalUsername)
         redirectToHome()
-      } catch (err) {
+      }
+      catch (err) {
         const status = err.response?.status
         setError(getErrorMessage(status))
-      } finally {
+      }
+      finally {
         setSubmitting(false)
       }
     },
@@ -174,7 +176,10 @@ const SignupPage = () => {
   const renderLoginLink = () => (
     <div className="card-footer p-4">
       <div className="text-center">
-        <span>{t('nav.hasAccount')} </span>
+        <span>
+          {t('nav.hasAccount')}
+          {' '}
+        </span>
         <Link to={ROUTES.LOGIN}>{t('nav.login')}</Link>
       </div>
     </div>
