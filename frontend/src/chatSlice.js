@@ -21,16 +21,7 @@ const extractUsername = (obj) => {
   if (!obj || typeof obj !== 'object') {
     return DEFAULT_USERNAME
   }
-  return (
-    obj.username ||
-    obj.nickname ||
-    obj.name ||
-    obj.user?.username ||
-    obj.user?.name ||
-    obj.author?.username ||
-    obj.sender?.username ||
-    DEFAULT_USERNAME
-  )
+  return obj.username || obj.nickname || obj.name || obj.user?.username || obj.user?.name || obj.author?.username || obj.sender?.username || DEFAULT_USERNAME
 }
 const normalizeMessage = (payload) => {
   if (!payload) {
@@ -44,9 +35,11 @@ const normalizeMessage = (payload) => {
     let id
     if (data.id !== null) {
       id = Number(data.id)
-    } else if (attrs.id !== null) {
+    }
+ else if (attrs.id !== null) {
       id = Number(attrs.id)
-    } else {
+    }
+ else {
       id = undefined
     }
 
@@ -100,7 +93,8 @@ const persistToStorage = (channels, messages) => {
     if (messages) {
       localStorage.setItem('chatMessages', JSON.stringify(messages))
     }
-  } catch (error) {
+  }
+ catch (error) {
     // eslint-disable-next-line no-console
     console.warn('Failed to persist data to localStorage:', error)
   }
@@ -108,16 +102,14 @@ const persistToStorage = (channels, messages) => {
 // Async thunks
 export const fetchChatData = createAsyncThunk('chat/fetchChatData', async (_, { rejectWithValue }) => {
   try {
-    const [channelsRes, messagesRes] = await Promise.all([
-      createApiRequest('get', '/api/v1/channels'),
-      createApiRequest('get', '/api/v1/messages'),
-    ])
+    const [channelsRes, messagesRes] = await Promise.all([createApiRequest('get', '/api/v1/channels'), createApiRequest('get', '/api/v1/messages')])
     return {
       channels: channelsRes.data?.channels || channelsRes.data?.data?.channels || channelsRes.data || [],
       messages: messagesRes.data?.messages || messagesRes.data?.data?.messages || messagesRes.data || [],
       currentChannelId: channelsRes.data?.currentChannelId || channelsRes.data?.data?.currentChannelId,
     }
-  } catch (error) {
+  }
+ catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -133,7 +125,8 @@ export const sendMessage = createAsyncThunk('chat/sendMessage', async ({ body, c
       },
     })
     return response.data
-  } catch (error) {
+  }
+ catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -143,7 +136,8 @@ export const createChannel = createAsyncThunk('chat/createChannel', async ({ nam
       data: { attributes: { name } },
     })
     return response.data
-  } catch (error) {
+  }
+ catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -151,7 +145,8 @@ export const renameChannel = createAsyncThunk('chat/renameChannel', async ({ id,
   try {
     const response = await createApiRequest('patch', `/api/v1/channels/${id}`, { name })
     return response.data
-  } catch (error) {
+  }
+ catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -159,7 +154,8 @@ export const removeChannel = createAsyncThunk('chat/removeChannel', async ({ id 
   try {
     const response = await createApiRequest('delete', `/api/v1/channels/${id}`)
     return { id, data: response.data }
-  } catch (error) {
+  }
+ catch (error) {
     return rejectWithValue(error.response?.data || error.message)
   }
 })
@@ -233,9 +229,7 @@ const chatSlice = createSlice({
         state.channels = normalizedChannels.length > 0 ? normalizedChannels : DEFAULT_CHANNELS
         const messages = Array.isArray(payload.messages) ? payload.messages : Object.values(payload.messages || {})
         const normalizedMessages = messages.map(normalizeMessage).filter(Boolean)
-        const uniqueMessages = normalizedMessages.filter(
-          (message, index, arr) => message.id === null || arr.findIndex((m) => m.id === message.id) === index,
-        )
+        const uniqueMessages = normalizedMessages.filter((message, index, arr) => message.id === null || arr.findIndex((m) => m.id === message.id) === index)
         state.messages = uniqueMessages
         state.currentChannelId = Number(payload.currentChannelId || state.channels[0]?.id)
         persistToStorage(state.channels, state.messages)
@@ -291,10 +285,9 @@ const chatSlice = createSlice({
         const exists = state.channels.some((c) => c.id === finalChannel.id)
         if (!exists) {
           state.channels.push(finalChannel)
-        } else {
-          state.channels = state.channels.map((c) =>
-            c.id === finalChannel.id ? { ...c, name: c.name || finalChannel.name } : c,
-          )
+        }
+ else {
+          state.channels = state.channels.map((c) => (c.id === finalChannel.id ? { ...c, name: c.name || finalChannel.name } : c))
         }
         state.currentChannelId = finalChannel.id
         persistToStorage(state.channels, null)
@@ -324,6 +317,5 @@ const chatSlice = createSlice({
       })
   },
 })
-export const { messageReceived, setCurrentChannelId, channelReceived, channelRenamed, channelRemoved } =
-  chatSlice.actions
+export const { messageReceived, setCurrentChannelId, channelReceived, channelRenamed, channelRemoved } = chatSlice.actions
 export default chatSlice.reducer

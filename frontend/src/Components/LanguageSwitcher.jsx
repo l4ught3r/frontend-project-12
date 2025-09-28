@@ -45,7 +45,8 @@ const LanguageSwitcher = () => {
             />
           </div>
         )
-      } else if (language.code === 'en') {
+      }
+ else if (language.code === 'en') {
         // Британский флаг (упрощенный): синий фон с белым крестом
         return (
           <div

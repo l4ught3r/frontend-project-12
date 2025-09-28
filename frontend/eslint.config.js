@@ -61,15 +61,12 @@ export default [
       'prefer-object-spread': 'error',
 
       // Стилистические правила
-      semi: ['error', 'never'],
-      quotes: ['error', 'single', { avoidEscape: true }],
+      'brace-style': ['error', 'stroustrup'],
       'comma-dangle': ['error', 'always-multiline'],
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],
 
       // Правила для лучших практик
-      eqeqeq: ['error', 'always'],
-      curly: ['error', 'all'],
       'no-var': 'error',
       'prefer-arrow-callback': 'error',
     },
