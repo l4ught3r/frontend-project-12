@@ -30,7 +30,7 @@ const ChatPage = () => {
   const currentChannel = useMemo(() => channels.find(c => c.id === currentChannelId) || channels[0] || {}, [channels, currentChannelId])
   const channelMessages = useMemo(() => messages.filter(m => m.channelId === (currentChannelId || currentChannel?.id)), [messages, currentChannelId, currentChannel?.id])
   const getMessageCountText = useCallback(
-    count => {
+    (count) => {
       return t('chat.messageCount', { count })
     },
     [t],
@@ -42,7 +42,7 @@ const ChatPage = () => {
           .transform(v => v?.trim())
           .min(3, t('chat.validation.length'))
           .max(20, t('chat.validation.length'))
-          .test('unique', t('chat.validation.unique'), value => {
+          .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase()
             return !trimmed || !channels.some(c => c.name?.trim().toLowerCase() === trimmed)
           })
@@ -57,18 +57,16 @@ const ChatPage = () => {
           .transform(v => v?.trim())
           .min(3, t('chat.validation.length'))
           .max(20, t('chat.validation.length'))
-          .test('unique', t('chat.validation.unique'), value => {
+          .test('unique', t('chat.validation.unique'), (value) => {
             const trimmed = value?.trim().toLowerCase()
             if (!trimmed) {
               return true
             }
-            // Проверяем, что имя отличается от текущего
             const currentChannel = channels.find(c => c.id === renameData.id)
             const currentName = currentChannel?.name?.trim().toLowerCase()
             if (trimmed === currentName) {
-              return false // То же имя - показываем ошибку
+              return false
             }
-            // Проверяем уникальность среди других каналов
             return !channels.some(c => c.id !== renameData.id && c.name?.trim().toLowerCase() === trimmed)
           })
           .required(t('chat.validation.required')),
@@ -105,13 +103,13 @@ const ChatPage = () => {
     navigate('/login', { replace: true })
   }, [navigate])
   const handleChannelClick = useCallback(
-    id => {
+    (id) => {
       dispatch(setCurrentChannelId(id))
     },
     [dispatch],
   )
   const handleMessageSubmit = useCallback(
-    async e => {
+    async (e) => {
       e.preventDefault()
       const trimmed = messageBody.trim()
       const channelId = currentChannelId || currentChannel?.id
@@ -124,10 +122,10 @@ const ChatPage = () => {
         setMessageBody('')
       }
       catch {
-        // Ошибка уже обработана в slice
+        notifyNetworkError(t)
       }
     },
-    [messageBody, currentChannelId, currentChannel?.id, dispatch],
+    [messageBody, currentChannelId, currentChannel?.id, dispatch, t],
   )
   const openModal = useCallback((type, data = {}) => {
     setModals(prev => ({ ...prev, [type]: true }))
@@ -139,7 +137,7 @@ const ChatPage = () => {
       setRemoveTargetId(data.id)
     }
   }, [])
-  const closeModal = useCallback(type => {
+  const closeModal = useCallback((type) => {
     setModals(prev => ({ ...prev, [type]: false }))
     if (type === 'rename') {
       setRenameData({ id: null, name: '' })
@@ -148,7 +146,7 @@ const ChatPage = () => {
       setRemoveTargetId(null)
     }
   }, [])
-  const handleDropdownToggle = useCallback(id => {
+  const handleDropdownToggle = useCallback((id) => {
     setDropdownOpenId(prev => (prev === id ? null : id))
   }, [])
   const handleCreateChannel = useCallback(
@@ -164,9 +162,7 @@ const ChatPage = () => {
         closeModal('add')
         notifyChannelCreated(t)
       }
-      catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to create channel:', error)
+      catch {
         notifyNetworkError(t)
       }
       finally {
@@ -193,9 +189,7 @@ const ChatPage = () => {
         closeModal('rename')
         notifyChannelRenamed(t)
       }
-      catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Failed to rename channel:', error)
+      catch {
         notifyNetworkError(t)
       }
       finally {
@@ -213,13 +207,10 @@ const ChatPage = () => {
       closeModal('remove')
       notifyChannelRemoved(t)
     }
-    catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to remove channel:', error)
+    catch {
       notifyNetworkError(t)
     }
   }, [dispatch, removeTargetId, closeModal, t])
-  // Render helpers
   const renderModal = (type, title, children) => {
     if (!modals[type]) {
       return null
@@ -241,7 +232,7 @@ const ChatPage = () => {
       </>
     )
   }
-  const renderChannelItem = channel => {
+  const renderChannelItem = (channel) => {
     const isActive = channel.id === (currentChannelId || currentChannel?.id)
     const isRemovable = channel.removable !== false && channel.id > 2
     const showDropdown = dropdownOpenId === channel.id
@@ -279,8 +270,7 @@ const ChatPage = () => {
                     onClick={() =>
                       openModal('remove', {
                         id: channel.id,
-                      })
-                    }
+                      })}
                   >
                     {t('chat.actions.delete')}
                   </button>
@@ -291,8 +281,7 @@ const ChatPage = () => {
                       openModal('rename', {
                         id: channel.id,
                         name: channel.name,
-                      })
-                    }
+                      })}
                   >
                     {t('chat.actions.rename')}
                   </button>

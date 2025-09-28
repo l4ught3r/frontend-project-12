@@ -68,7 +68,8 @@ export default [
       'object-curly-spacing': ['error', 'always'],
       'array-bracket-spacing': ['error', 'never'],
       '@stylistic/indent': ['error', 2],
-      '@stylistic/arrow-parens': ['error', 'as-needed'], // Убирает ненужные скобки в стрелочных функциях
+      '@stylistic/arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
+      '@stylistic/jsx-curly-newline': ['error', { multiline: 'consistent', singleline: 'consistent' }], // Контролирует переносы в JSX выражениях
 
       // Правила для лучших практик
       'no-var': 'error',

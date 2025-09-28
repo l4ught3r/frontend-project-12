@@ -135,7 +135,7 @@ const LanguageSwitcher = () => {
       </div>
     )
   }
-  const handleLanguageChange = langCode => {
+  const handleLanguageChange = (langCode) => {
     i18n.changeLanguage(langCode)
     setIsOpen(false)
     localStorage.setItem('language', langCode)
@@ -145,7 +145,7 @@ const LanguageSwitcher = () => {
   }
   // Закрытие при клике вне компонента
   useEffect(() => {
-    const handleClickOutside = event => {
+    const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false)
       }
@@ -157,7 +157,7 @@ const LanguageSwitcher = () => {
   }, [])
   // Закрытие при нажатии Escape
   useEffect(() => {
-    const handleEscape = event => {
+    const handleEscape = (event) => {
       if (event.key === 'Escape') {
         setIsOpen(false)
       }

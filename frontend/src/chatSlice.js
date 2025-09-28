@@ -17,13 +17,13 @@ const createApiRequest = (method, url, data = null) => {
   return axios[method](url, ...(data ? [data, config] : [config]))
 }
 // Утилиты для нормализации данных
-const extractUsername = obj => {
+const extractUsername = (obj) => {
   if (!obj || typeof obj !== 'object') {
     return DEFAULT_USERNAME
   }
   return obj.username || obj.nickname || obj.name || obj.user?.username || obj.user?.name || obj.author?.username || obj.sender?.username || DEFAULT_USERNAME
 }
-const normalizeMessage = payload => {
+const normalizeMessage = (payload) => {
   if (!payload) {
     return null
   }
@@ -58,7 +58,7 @@ const normalizeMessage = payload => {
     username: extractUsername(payload),
   }
 }
-const normalizeChannel = payload => {
+const normalizeChannel = (payload) => {
   if (!payload) {
     return null
   }
@@ -79,7 +79,7 @@ const normalizeChannel = payload => {
 // Утилиты для работы с состоянием
 const isDuplicateMessage = (messages, message) => message?.id !== null && messages.some(m => m.id === message.id)
 const removeOptimisticMessages = (messages, channelId, body, username) =>
-  messages.filter(m => {
+  messages.filter((m) => {
     if (!m.isOptimistic) {
       return true
     }
@@ -216,9 +216,9 @@ const chatSlice = createSlice({
       persistToStorage(state.channels, state.messages)
     },
   },
-  extraReducers: builder => {
+  extraReducers: (builder) => {
     builder
-      .addCase(fetchChatData.pending, state => {
+      .addCase(fetchChatData.pending, (state) => {
         state.status = 'loading'
       })
       .addCase(fetchChatData.fulfilled, (state, action) => {
