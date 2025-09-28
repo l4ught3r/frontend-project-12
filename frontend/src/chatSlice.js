@@ -94,12 +94,10 @@ const persistToStorage = (channels, messages) => {
       localStorage.setItem('chatMessages', JSON.stringify(messages))
     }
   }
-  catch (error) {
-    // eslint-disable-next-line no-console
-    console.warn('Failed to persist data to localStorage:', error)
+  catch {
+    // Игнорируем ошибки localStorage - не критично для работы приложения
   }
 }
-// Async thunks
 export const fetchChatData = createAsyncThunk('chat/fetchChatData', async (_, { rejectWithValue }) => {
   try {
     const [channelsRes, messagesRes] = await Promise.all([createApiRequest('get', '/api/v1/channels'), createApiRequest('get', '/api/v1/messages')])

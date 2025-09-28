@@ -70,6 +70,7 @@ export default [
       '@stylistic/indent': ['error', 2],
       '@stylistic/arrow-parens': ['error', 'as-needed', { requireForBlockBody: true }],
       '@stylistic/jsx-curly-newline': ['error', { multiline: 'consistent', singleline: 'consistent' }], // Контролирует переносы в JSX выражениях
+      '@stylistic/jsx-one-expression-per-line': ['error', { allow: 'single-child' }], // Требует размещения JSX выражений на отдельных строках
 
       // Правила для лучших практик
       'no-var': 'error',

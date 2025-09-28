@@ -333,7 +333,10 @@ const ChatPage = () => {
                 {/* Channel header */}
                 <div className="bg-light mb-4 p-3 shadow-sm small">
                   <p className="m-0">
-                    <b>#{currentChannel?.name || ''}</b>
+                    <b>
+                      #
+                      {currentChannel?.name || ''}
+                    </b>
                   </p>
                   <span className="text-muted">{getMessageCountText(channelMessages.length)}</span>
                 </div>
@@ -341,7 +344,12 @@ const ChatPage = () => {
                 <div className="chat-messages overflow-auto px-5">
                   {channelMessages.map((msg, idx) => (
                     <div className="text-break mb-2" key={msg.id ?? `${msg.channelId}-${idx}`}>
-                      <b>{msg.username}:</b> {msg.body}
+                      <b>
+                        {msg.username}
+                        :
+                      </b> 
+                      {' '}
+                      {msg.body}
                     </div>
                   ))}
                   <div ref={messagesEndRef} />
