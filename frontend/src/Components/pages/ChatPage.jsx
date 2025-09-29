@@ -324,7 +324,7 @@ const ChatPage = () => {
               <>
                 <button
                   type="button"
-                  className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn${isActive ? ' btn-secondary show' : ''}`}
+                  className={`flex-grow-0 dropdown-toggle dropdown-toggle-split btn${isActive ? ' btn-secondary' : ''}`}
                   onClick={() => handleDropdownToggle(channel.id)}
                   aria-expanded={showDropdown}
                 >

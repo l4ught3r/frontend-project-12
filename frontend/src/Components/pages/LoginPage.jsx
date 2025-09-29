@@ -71,12 +71,11 @@ const LoginPage = () => {
     [t, saveUserData, redirectToHome],
   )
 
-  const renderFormField = (name, type, autoComplete, autoFocus = false) => (
+  const renderFormField = (name, type, autoFocus = false) => (
     <div className="form-floating mb-3">
       <Field
         name={name}
         type={type}
-        autoComplete={autoComplete}
         autoFocus={autoFocus}
         required
         placeholder={t(`login.${name}`)}
@@ -114,8 +113,8 @@ const LoginPage = () => {
         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
           <h1 className="text-center mb-4">{t('login.title')}</h1>
 
-          {renderFormField('username', 'text', 'username', true)}
-          {renderFormField('password', 'password', 'current-password')}
+          {renderFormField('username', 'text', true)}
+          {renderFormField('password', 'password')}
 
           {renderErrorAlert()}
 

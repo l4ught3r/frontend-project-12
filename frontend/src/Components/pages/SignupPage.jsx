@@ -111,7 +111,7 @@ const SignupPage = () => {
     [saveUserData, redirectToHome, getErrorMessage],
   )
 
-  const renderFormField = (name, type, autoComplete, autoFocus = false, errors, touched) => {
+  const renderFormField = (name, type, autoFocus = false, errors, touched) => {
     const hasError = errors[name] && touched[name]
 
     return (
@@ -119,7 +119,6 @@ const SignupPage = () => {
         <Field
           name={name}
           type={type}
-          autoComplete={autoComplete}
           autoFocus={autoFocus}
           required
           placeholder={t(`signup.${name}`)}
@@ -159,9 +158,9 @@ const SignupPage = () => {
         <Form className="col-12 col-md-6 mt-3 mt-mb-0">
           <h1 className="text-center mb-4">{t('signup.title')}</h1>
 
-          {renderFormField('username', 'text', 'username', true, errors, touched)}
-          {renderFormField('password', 'password', 'new-password', false, errors, touched)}
-          {renderFormField('confirmPassword', 'password', 'new-password', false, errors, touched)}
+          {renderFormField('username', 'text', true, errors, touched)}
+          {renderFormField('password', 'password', false, errors, touched)}
+          {renderFormField('confirmPassword', 'password', false, errors, touched)}
 
           {renderErrorAlert()}
 

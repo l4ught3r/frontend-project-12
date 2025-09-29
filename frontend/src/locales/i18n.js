@@ -54,7 +54,7 @@ const resources = {
         channels: 'Каналы',
         addChannel: 'Добавить канал',
         addChannelButton: '+',
-        messageCount: '{{count}} сообщение',
+        messageCount: '{{count}} сообщений',
         messageCount_2: '{{count}} сообщения',
         messageCount_5: '{{count}} сообщений',
         newMessage: 'Новое сообщение',
